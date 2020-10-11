@@ -75,18 +75,19 @@ public class MatrixUtils {
 
     /**
      * Performs forward substitution operation on provided matrix <code>L</code> and matrix (vector) <code>b</code>,
-     * whose number of rows  should be equal to the dimensions of quadratic matrix <code>L</code>. Changes are applied
+     * whose number of rows  should be equal to the dimensions of square matrix <code>L</code>. Changes are applied
      * to the <code>b</code>'s real reference without copying.
      *
      * @param L matrix L.
      * @param b vector b (n x 1).
      * @return IMatrix as a result of substitution.
-     * @throws RuntimeException         if matrix <code>L</code> isn't quadratic matrix.
-     * @throws IllegalArgumentException if dimensions of vector <code>b</code> don't fit.
+     * @throws IllegalArgumentException if matrix <code>L</code> is not square matrix or if dimensions of vector
+     *                                  <code>b</code> don't fit.
      */
     public static IMatrix fs(IMatrix L, IMatrix b) {
-        if (L.getRowsCount() != L.getColumnsCount()) {
-            throw new RuntimeException("MatrixUtils::fs(IMatrix,IMatrix) cannot be performed on non quadratic matrix!");
+        if (!L.isSquareMatrix()) {
+            throw new IllegalArgumentException(
+                    "MatrixUtils::fs(IMatrix,IMatrix) cannot be performed on non square matrix!");
         }
         if (b.getRowsCount() != L.getRowsCount()) {
             throw new IllegalArgumentException("MatrixUtils::fs(IMatrix,IMatrix) vectors b dimensions are invalid!");
@@ -101,18 +102,19 @@ public class MatrixUtils {
 
     /**
      * Performs backward substitution operation on provided matrix <code>U</code> and matrix (vector) <code>y</code>,
-     * whose number of rows should be equal to the dimensions of quadratic matrix <code>U</code>. Changes are applied to
+     * whose number of rows should be equal to the dimensions of square matrix <code>U</code>. Changes are applied to
      * the <code>y</code>'s real reference without copying.
      *
      * @param U matrix U.
      * @param y vector y (n x 1).
      * @return IMatrix as a result of substitution.
-     * @throws RuntimeException         if matrix <code>U</code> isn't quadratic matrix.
-     * @throws IllegalArgumentException if dimensions of vector <code>y</code> don't fit.
+     * @throws IllegalArgumentException if matrix <code>U</code> is not square matrix or if dimensions of vector
+     *                                  <code>y</code> don't fit.
      */
     public static IMatrix bs(IMatrix U, IMatrix y) {
-        if (U.getRowsCount() != U.getColumnsCount()) {
-            throw new RuntimeException("MatrixUtils::bs(IMatrix,IMatrix) cannot be performed on non quadratic matrix!");
+        if (!U.isSquareMatrix()) {
+            throw new IllegalArgumentException(
+                    "MatrixUtils::bs(IMatrix,IMatrix) cannot be performed on non square matrix!");
         }
         if (y.getRowsCount() != U.getRowsCount()) {
             throw new IllegalArgumentException("MatrixUtils::bs(IMatrix,IMatrix) vectors y dimensions are invalid!");
@@ -128,14 +130,61 @@ public class MatrixUtils {
 
     /**
      * Based on provided boolean flag <code>useLUP</code>, method performs <b>LUP Decomposition</b> if flag is set to
-     * <code>true</code>, otherwise it performs <b>LU Decomposition.</b> <b>LUP Decomposition</b> is <b>LU
-     * Decomposition</b> + partial pivoting by columns. <br>
-     * <b>L</b>, <b>U</b> and <b>P</b> (only if LUP method is used) matrices can be accessed through certain getters
-     * and every operation is performed on <b>this</b> matrix.
+     * <code>true</code>, otherwise it performs <b>LU Decomposition</b> on provided matrix <code>A</code>.
+     * <b>LUP Decomposition</b> is <b>LU Decomposition</b> + partial pivoting by columns.
      *
+     * @param A      matrix A.
      * @param useLUP boolean flag.
+     * @return an array that consists of matrix L, matrix U and (optionally) matrix P (it can be <code>null!</code>).
+     * @throws IllegalArgumentException if provided matrix <code>A</code> is not square matrix.
+     * @throws ArithmeticException      if a pivot element is zero.
      */
-    public static void luDecomposition(boolean useLUP) {
+    public static IMatrix[] luDecomposition(IMatrix A, boolean useLUP) {
+        if (!A.isSquareMatrix()) {
+            throw new IllegalArgumentException(
+                    "MatrixUtils::luDecomposition(IMatrix,boolean) cannot be performed on non square matrix!");
+        }
+        IMatrix P = useLUP ? A.identity() : null;
+        for (int i = 0; i < A.getRowsCount() - 1; i++) {
+            if (useLUP) {
+                int maxPivotRowIndex = i;
+                double maxPivot = A.get(i, i);
+                for (int j = 1; j < A.getRowsCount(); j++) {
+                    if (Math.abs(A.get(j, i)) > Math.abs(maxPivot)) {
+                        maxPivot = A.get(j, i);
+                        maxPivotRowIndex = j;
+                    }
+                }
+                if (Math.abs(maxPivot) <= 1e-9) {
+                    throw new ArithmeticException("MatrixUtils::luDecomposition(IMatrix,boolean) pivot is zero!");
+                }
+                A.swapRows(maxPivotRowIndex, i);
+                P.swapRows(maxPivotRowIndex, i);
+            }
+            for (int j = i + 1; j < A.getRowsCount(); j++) {
+                try {
+                    A.set(j, i, A.get(j, i) / A.get(i, i));
+                } catch (ArithmeticException e) {
+                    throw new ArithmeticException("MatrixUtils::luDecomposition(IMatrix,boolean) division by zero!");
+                }
+                for (int k = i + 1; k < A.getRowsCount(); k++) {
+                    A.set(j, k, A.get(j, k) - A.get(j, i) * A.get(i, k));
+                }
+            }
+        }
+        return new IMatrix[]{new LUMatrixView(A, true), new LUMatrixView(A, false), P};
+    }
+
+    /**
+     * Calculates determinant by using results from <b>LU(P) Decomposition</b>.
+     *
+     * @param numOfRowsSwapped number of rows swapped in lup decomposition.
+     * @param L                matrix L.
+     * @param U                matrix U.
+     * @return calculated determinant.
+     */
+    public static double lupDeterminant(int numOfRowsSwapped, IMatrix L, IMatrix U) {
+        return Math.pow(-1, numOfRowsSwapped) * L.determinant() * U.determinant();
     }
 
 }

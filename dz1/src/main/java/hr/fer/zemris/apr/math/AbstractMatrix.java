@@ -9,12 +9,11 @@ public abstract class AbstractMatrix implements IMatrix {
 
     private final static double DELTA = 1E-9;
 
+    protected int numOfRowsSwapped;
+
     @Override
     public IMatrix add(IMatrix other) {
-        if (getRowsCount() != other.getRowsCount() || getColumnsCount() != other.getColumnsCount()) {
-            String methodName = getClass().getSimpleName() + "::add(IMatrix)";
-            throw new IllegalArgumentException(methodName + " dimensions of both matrices aren't equal!");
-        }
+        testEqualDimensions(other, "add(IMatrix)");
         for (int i = 0; i < getRowsCount(); i++) {
             for (int j = 0; j < getColumnsCount(); j++) {
                 set(i, j, get(i, j) + other.get(i, j));
@@ -25,10 +24,7 @@ public abstract class AbstractMatrix implements IMatrix {
 
     @Override
     public IMatrix sub(IMatrix other) {
-        if (getRowsCount() != other.getRowsCount() || getColumnsCount() != other.getColumnsCount()) {
-            String methodName = getClass().getSimpleName() + "::sub(IMatrix)";
-            throw new IllegalArgumentException(methodName + " dimensions of both matrices aren't equal!");
-        }
+        testEqualDimensions(other, "sub(IMatrix)");
         for (int i = 0; i < getRowsCount(); i++) {
             for (int j = 0; j < getColumnsCount(); j++) {
                 set(i, j, get(i, j) - other.get(i, j));
@@ -76,6 +72,54 @@ public abstract class AbstractMatrix implements IMatrix {
     }
 
     @Override
+    public double determinant() {
+        testSquareMatrix("determinant()");
+        if (getRowsCount() == 1) return get(0, 0);
+        int sign = 1;
+        double result = 0.0;
+        for (int i = 0; i < getRowsCount(); i++) {
+            double minor = subMatrix(0, i).determinant();
+            double cofactor = sign * minor;
+            result += get(0, i) * cofactor;
+            sign *= -1;
+        }
+        return result;
+    }
+
+    @Override
+    public IMatrix subMatrix(int row, int column) {
+        IMatrix result = newInstance(getRowsCount() - 1, getColumnsCount() - 1);
+        for (int i = 0, r = 0; i < getRowsCount(); i++) {
+            if (i == row) continue;
+            for (int j = 0, c = 0; j < getColumnsCount(); j++) {
+                if (j == column) continue;
+                result.set(r, c++, get(i, j));
+            }
+            r++;
+        }
+        return result;
+    }
+
+    @Override
+    public int getNumOfRowsSwapped() {
+        return numOfRowsSwapped;
+    }
+
+    @Override
+    public boolean isSquareMatrix() {
+        return getRowsCount() == getColumnsCount();
+    }
+
+    @Override
+    public IMatrix identity() {
+        IMatrix I = newInstance(getRowsCount(), getColumnsCount());
+        for (int i = 0; i < getRowsCount(); i++) {
+            I.set(i, i, 1);
+        }
+        return I;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Matrix)) return false;
@@ -91,6 +135,58 @@ public abstract class AbstractMatrix implements IMatrix {
             }
         }
         return true;
+    }
+
+    /**
+     * Method used for validating row and column indexes.
+     *
+     * @param row    row index.
+     * @param column column index.
+     * @param method method's declaration which invoked this method.
+     */
+    protected void testOutOfBounds(int row, int column, String method) {
+        String className = getClass().getSimpleName();
+        if (row < 0 || row > getRowsCount() - 1) {
+            throw new IndexOutOfBoundsException(String.format(
+                    "%s row index is invalid! It should be from [0, %d)!",
+                    className + "::" + method, getRowsCount())
+            );
+        }
+        if (column < 0 || column > getColumnsCount() - 1) {
+            throw new IndexOutOfBoundsException(String.format(
+                    "%s column index is invalid! It should be from [0, %d)!",
+                    className + "::" + method, getColumnsCount())
+            );
+        }
+    }
+
+    /**
+     * Checks whether current matrix is square matrix.
+     *
+     * @param method method's declaration which invoked this method.
+     * @throws RuntimeException if matrix is not square matrix.
+     */
+    protected void testSquareMatrix(String method) {
+        String className = getClass().getSimpleName();
+        if (!isSquareMatrix()) {
+            String methodName = className + "::" + method;
+            throw new RuntimeException(methodName + " matrix is not a square matrix!");
+        }
+    }
+
+    /**
+     * Checks whether dimension of current matrix are equal to provided <code>other</code> matrix.
+     *
+     * @param other  other matrix.
+     * @param method method's declaration which invoked this method.
+     * @throws IllegalArgumentException if dimensions are not equal.
+     */
+    protected void testEqualDimensions(IMatrix other, String method) {
+        String className = getClass().getSimpleName();
+        if (getRowsCount() != other.getRowsCount() || getColumnsCount() != other.getColumnsCount()) {
+            String methodName = className + "::" + method;
+            throw new IllegalArgumentException(methodName + " dimensions of both matrices aren't equal!");
+        }
     }
 
 }

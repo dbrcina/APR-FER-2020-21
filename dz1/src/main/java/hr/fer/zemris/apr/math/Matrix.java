@@ -34,16 +34,16 @@ public class Matrix extends AbstractMatrix {
      *
      * @param rows    number of rows.
      * @param columns number of columns.
-     * @throws IllegalArgumentException if < 0 value is provided.
+     * @throws IllegalArgumentException if < 1 value is provided.
      */
     public Matrix(int rows, int columns) {
-        this(new double[testIfLessThanZero(rows)][testIfLessThanZero(columns)]);
+        this(new double[testIfLessThanOne(rows)][testIfLessThanOne(columns)]);
     }
 
     /* This method is used only for validating Matrix(int,int) constructor. */
-    private static int testIfLessThanZero(int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException("Matrix::Matrix(int,int) doesn't permit negative values!");
+    private static int testIfLessThanOne(int value) {
+        if (value < 1) {
+            throw new IllegalArgumentException("Matrix::Matrix(int,int) doesn't permit < 1 values!");
         }
         return value;
     }
@@ -63,32 +63,29 @@ public class Matrix extends AbstractMatrix {
 
     @Override
     public double get(int row, int column) {
-        testOutOfBounds(row, column, "Matrix::get(int,int)");
+        testOutOfBounds(row, column, "get(int,int)");
         return data[row][column];
     }
 
     @Override
     public void set(int row, int column, double value) {
-        testOutOfBounds(row, column, "Matrix::set(int,int,double)");
+        testOutOfBounds(row, column, "set(int,int,double)");
         data[row][column] = value;
     }
 
-    /* Method used for validating row and column indexes. */
-    private void testOutOfBounds(int row, int column, String method) {
-        if (row < 0 || row > getRowsCount() - 1) {
-            throw new IndexOutOfBoundsException(String.format(
-                    "%s row index is invalid! It should be from [0, %d)!",
-                    method, getRowsCount())
-            );
-        }
-        if (column < 0 || column > getColumnsCount() - 1) {
-            throw new IndexOutOfBoundsException(String.format(
-                    "%s column index is invalid! It should be from [0, %d)!",
-                    method, getColumnsCount())
-            );
-        }
-    }
+    /* ---------------------------------------------------------------- */
+    /* ---------------------- MANIPULATION METHODS -------------------- */
 
+    @Override
+    public IMatrix swapRows(int r1, int r2) {
+        testOutOfBounds(r1, 0, "swapRows(int,int)");
+        testOutOfBounds(r2, 0, "swapRows(int,int)");
+        double[] temp = data[r1];
+        data[r1] = data[r2];
+        data[r2] = temp;
+        numOfRowsSwapped++;
+        return this;
+    }
     /* ---------------------------------------------------------------- */
     /* --------------------- CONSTRUCTION METHODS --------------------- */
 

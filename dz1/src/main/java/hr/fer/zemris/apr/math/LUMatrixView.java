@@ -27,6 +27,7 @@ public class LUMatrixView extends AbstractMatrix {
 
     @Override
     public double get(int row, int column) {
+        testOutOfBounds(row, column, "get(int,int)");
         if (matrixL) { // handle get for matrix L
             if (row == column) return 1;
             if (row > column) return matrix.get(row, column);
@@ -38,8 +39,26 @@ public class LUMatrixView extends AbstractMatrix {
 
     @Override
     public void set(int row, int column, double value) {
-
+        throw new RuntimeException("LUMatrixView::set(int,int,double) is not supported!");
     }
+
+    /* The determinant of triangular matrices is equal to the product of the elements on the diagonals. */
+    @Override
+    public double determinant() {
+        testSquareMatrix("determinant()");
+        if (matrixL) return 1;
+        double d = 1;
+        for (int i = 0; i < getRowsCount(); i++) {
+            d *= matrix.get(i, i);
+        }
+        return d;
+    }
+
+    @Override
+    public IMatrix swapRows(int r1, int r2) {
+        throw new RuntimeException("LUMatrixView::swapRows(int,int) is not supported!");
+    }
+
 
     @Override
     public IMatrix copy() {

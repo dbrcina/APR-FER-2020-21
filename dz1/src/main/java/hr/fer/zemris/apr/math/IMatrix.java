@@ -111,6 +111,39 @@ public interface IMatrix {
     IMatrix mul(IMatrix other);
 
     /**
+     * Calculates matrix determinant.
+     *
+     * @return matrix determinant.
+     * @throws RuntimeException if matrix is not square matrix.
+     */
+    double determinant();
+
+    /**
+     * Creates a new IMatrix object without provided <code>row</code> and <code>column</code>.
+     *
+     * @return new instance of IMatrix as a result.
+     * @throws IndexOutOfBoundsException if <code>row</code> or <code>column</code> index is invalid.
+     */
+    IMatrix subMatrix(int row, int column);
+
+    /**
+     * Swaps row <code>r1</code> with row <code>r2</code>.
+     *
+     * @param r1 row 1 index.
+     * @param r2 row 2 index.
+     * @return <b>this</b> matrix.
+     * @throws IndexOutOfBoundsException if row indexes are invalid.
+     */
+    IMatrix swapRows(int r1, int r2);
+
+    /**
+     * @return number of rows swapped by {@link #swapRows(int, int)} method.
+     */
+    int getNumOfRowsSwapped();
+
+    boolean isSquareMatrix();
+
+    /**
      * Makes a copy of <b>this</b> IMatrix.
      *
      * @return copied IMatrix.
@@ -118,12 +151,19 @@ public interface IMatrix {
     IMatrix copy();
 
     /**
-     * Creates a new IMatrix object with dimensions set to provided <code>rows</code> and <code>columns</code> and with
-     * all values set to zero.
+     * Creates a new IMatrix object which dimensions set to provided <code>rows</code> and <code>columns</code> and
+     * with all values set to zero.
      *
      * @return new instance of IMatrix as a result.
-     * @throws IllegalArgumentException if value < 0 is provided.
+     * @throws IllegalArgumentException if value < 1 is provided.
      */
     IMatrix newInstance(int rows, int columns);
+
+    /**
+     * Creates an identity matrix based on <b>this</b> matrix.
+     *
+     * @return new instance of IMatrix as a result.
+     */
+    IMatrix identity();
 
 }
