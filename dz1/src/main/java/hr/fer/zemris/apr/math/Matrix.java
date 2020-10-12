@@ -80,6 +80,7 @@ public class Matrix extends AbstractMatrix {
     public IMatrix swapRows(int r1, int r2) {
         testOutOfBounds(r1, 0, "swapRows(int,int)");
         testOutOfBounds(r2, 0, "swapRows(int,int)");
+        if (r1 == r2) return this;
         double[] temp = data[r1];
         data[r1] = data[r2];
         data[r2] = temp;

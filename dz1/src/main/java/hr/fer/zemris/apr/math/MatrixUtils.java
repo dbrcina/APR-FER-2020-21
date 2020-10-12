@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
  */
 public class MatrixUtils {
 
+    private static final double DELTA = 1e-9;
+
     /* ---------------------------------------------------------------- */
     /* ------------------------- PARSE METHODS ------------------------ */
 
@@ -149,24 +151,23 @@ public class MatrixUtils {
             if (useLUP) {
                 int maxPivotRowIndex = i;
                 double maxPivot = A.get(i, i);
-                for (int j = 1; j < A.getRowsCount(); j++) {
+                for (int j = i + 1; j < A.getRowsCount(); j++) {
                     if (Math.abs(A.get(j, i)) > Math.abs(maxPivot)) {
                         maxPivot = A.get(j, i);
                         maxPivotRowIndex = j;
                     }
                 }
-                if (Math.abs(maxPivot) <= 1e-9) {
+                if (Math.abs(maxPivot) <= DELTA) {
                     throw new ArithmeticException("MatrixUtils::luDecomposition(IMatrix,boolean) pivot is zero!");
                 }
                 A.swapRows(maxPivotRowIndex, i);
                 P.swapRows(maxPivotRowIndex, i);
             }
             for (int j = i + 1; j < A.getRowsCount(); j++) {
-                try {
-                    A.set(j, i, A.get(j, i) / A.get(i, i));
-                } catch (ArithmeticException e) {
-                    throw new ArithmeticException("MatrixUtils::luDecomposition(IMatrix,boolean) division by zero!");
+                if (Math.abs(A.get(i, i)) <= DELTA) {
+                    throw new ArithmeticException("MatrixUtils::luDecomposition(IMatrix,boolean) pivot is zero!");
                 }
+                A.set(j, i, A.get(j, i) / A.get(i, i));
                 for (int k = i + 1; k < A.getRowsCount(); k++) {
                     A.set(j, k, A.get(j, k) - A.get(j, i) * A.get(i, k));
                 }

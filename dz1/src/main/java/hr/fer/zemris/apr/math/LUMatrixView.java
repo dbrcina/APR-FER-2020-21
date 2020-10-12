@@ -59,7 +59,6 @@ public class LUMatrixView extends AbstractMatrix {
         throw new RuntimeException("LUMatrixView::swapRows(int,int) is not supported!");
     }
 
-
     @Override
     public IMatrix copy() {
         return new LUMatrixView(matrix, matrixL);
