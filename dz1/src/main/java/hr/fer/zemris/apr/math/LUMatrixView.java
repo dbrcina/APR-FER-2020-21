@@ -38,7 +38,7 @@ public class LUMatrixView extends AbstractMatrix {
     }
 
     @Override
-    public void set(int row, int column, double value) {
+    public IMatrix set(int row, int column, double value) {
         throw new RuntimeException("LUMatrixView::set(int,int,double) is not supported!");
     }
 
@@ -66,7 +66,7 @@ public class LUMatrixView extends AbstractMatrix {
 
     @Override
     public IMatrix newInstance(int rows, int columns) {
-        return new LUMatrixView(matrix.newInstance(rows, columns), matrixL);
+        throw new RuntimeException("LUMatrixView::newInstance(int,int) is not supported!");
     }
 
 }

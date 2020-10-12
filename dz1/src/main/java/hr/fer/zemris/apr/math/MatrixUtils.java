@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -14,14 +15,31 @@ import java.util.stream.Collectors;
  */
 public class MatrixUtils {
 
-    private static final double DELTA = 1e-9;
+    /* ---------------------------------------------------------------- */
+    /* -------------------- HELPER METHODS/VARIABLES ------------------ */
+
+    /**
+     * Global variable used for double comparison and it can be changed if needed.
+     */
+    public static double DELTA = 1e-9;
+
+    /**
+     * Creates identity matrix with provided dimension <code>n</code>.
+     */
+    public static final Function<Integer, IMatrix> IDENTITY_MATRIX = n -> {
+        IMatrix identity = new Matrix(n, n);
+        for (int i = 0; i < n; i++) {
+            identity.set(i, i, 1);
+        }
+        return identity;
+    };
 
     /* ---------------------------------------------------------------- */
     /* ------------------------- PARSE METHODS ------------------------ */
 
     /**
      * Creates an instance of IMatrix whose definition is parsed from provided <code>file</code>. Each line in a file
-     * represents one row and in each row values are separated by spaces or tabs and they represents columns.
+     * represents one row and in each row values are separated by spaces or tabs and they represent columns.
      *
      * @param file matrix definition.
      * @return IMatrix as a parse result.
@@ -41,10 +59,11 @@ public class MatrixUtils {
             }
             // check if column numbers are consistent
             if (Arrays.stream(data).map(d -> d.length).distinct().count() != 1) {
-                throw new RuntimeException();
+                throw new RuntimeException("MatrixUtils::parseFromFile(String) number of columns are inconsistent!");
             }
         } catch (Exception e) {
-            throw new RuntimeException("Parsing '" + file + "' failed! Matrix definition is invalid!");
+            throw new RuntimeException(
+                    "MatrixUtils::parseFromFile(String) parsing '" + file + "' failed! Matrix definition is invalid!");
         }
         return new Matrix(data);
     }
@@ -56,7 +75,7 @@ public class MatrixUtils {
      * Prints provided <code>matrix</code> to <code>out</code> stream.
      *
      * @param matrix matrix.
-     * @param out    outputs stream.
+     * @param out    output stream.
      */
     public static void printMatrix(IMatrix matrix, PrintStream out) {
         for (int i = 0; i < matrix.getRowsCount(); i++) {
@@ -146,7 +165,7 @@ public class MatrixUtils {
             throw new IllegalArgumentException(
                     "MatrixUtils::luDecomposition(IMatrix,boolean) cannot be performed on non square matrix!");
         }
-        IMatrix P = useLUP ? A.identity() : null;
+        IMatrix P = useLUP ? IDENTITY_MATRIX.apply(A.getRowsCount()) : null;
         for (int i = 0; i < A.getRowsCount() - 1; i++) {
             if (useLUP) {
                 int maxPivotRowIndex = i;

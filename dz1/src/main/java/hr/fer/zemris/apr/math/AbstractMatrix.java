@@ -7,8 +7,6 @@ package hr.fer.zemris.apr.math;
  */
 public abstract class AbstractMatrix implements IMatrix {
 
-    private final static double DELTA = 1E-9;
-
     protected int numOfRowsSwapped;
 
     @Override
@@ -61,8 +59,8 @@ public abstract class AbstractMatrix implements IMatrix {
             String methodName = getClass().getSimpleName() + "::mul(IMatrix)";
             throw new IllegalArgumentException(methodName + " matrices dimensions are invalid!");
         }
-        for (int i = 0; i < getRowsCount(); i++) {
-            for (int j = 0; j < other.getColumnsCount(); j++) {
+        for (int i = 0; i < result.getRowsCount(); i++) {
+            for (int j = 0; j < result.getColumnsCount(); j++) {
                 for (int k = 0; k < getColumnsCount(); k++) {
                     result.set(i, j, result.get(i, j) + get(i, k) * other.get(k, j));
                 }
@@ -106,30 +104,28 @@ public abstract class AbstractMatrix implements IMatrix {
     }
 
     @Override
+    public void resetNumOfRowsSwappedCounter() {
+        numOfRowsSwapped = 0;
+    }
+
+    @Override
     public boolean isSquareMatrix() {
         return getRowsCount() == getColumnsCount();
     }
 
     @Override
-    public IMatrix identity() {
-        IMatrix I = newInstance(getRowsCount(), getColumnsCount());
-        for (int i = 0; i < getRowsCount(); i++) {
-            I.set(i, i, 1);
-        }
-        return I;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Matrix)) return false;
-        Matrix other = (Matrix) o;
-        if (getRowsCount() != other.getRowsCount() || getColumnsCount() != other.getColumnsCount()) {
+        if (!(o instanceof IMatrix)) return false;
+        IMatrix other = (IMatrix) o;
+        try {
+            testEqualDimensions(other, "equals(Object)");
+        } catch (IllegalArgumentException e) {
             return false;
         }
         for (int i = 0; i < getRowsCount(); i++) {
             for (int j = 0; j < getColumnsCount(); j++) {
-                if (Math.abs(get(i, j) - other.get(i, j)) > DELTA) {
+                if (Math.abs(get(i, j) - other.get(i, j)) > MatrixUtils.DELTA) {
                     return false;
                 }
             }
@@ -167,8 +163,8 @@ public abstract class AbstractMatrix implements IMatrix {
      * @throws RuntimeException if matrix is not square matrix.
      */
     protected void testSquareMatrix(String method) {
-        String className = getClass().getSimpleName();
         if (!isSquareMatrix()) {
+            String className = getClass().getSimpleName();
             String methodName = className + "::" + method;
             throw new RuntimeException(methodName + " matrix is not a square matrix!");
         }
@@ -182,8 +178,8 @@ public abstract class AbstractMatrix implements IMatrix {
      * @throws IllegalArgumentException if dimensions are not equal.
      */
     protected void testEqualDimensions(IMatrix other, String method) {
-        String className = getClass().getSimpleName();
         if (getRowsCount() != other.getRowsCount() || getColumnsCount() != other.getColumnsCount()) {
+            String className = getClass().getSimpleName();
             String methodName = className + "::" + method;
             throw new IllegalArgumentException(methodName + " dimensions of both matrices aren't equal!");
         }

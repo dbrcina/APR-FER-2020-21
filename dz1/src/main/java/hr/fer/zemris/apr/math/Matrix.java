@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * An implementation of {@link AbstractMatrix} class.
+ * An implementation of {@link IMatrix} interface.
  *
  * @author dbrcina
  */
@@ -30,7 +30,7 @@ public class Matrix extends AbstractMatrix {
 
     /**
      * Constructor. Creates a new instance of Matrix with provided number of <code>rows</code> and
-     * number of <code>columns</code> parameters.
+     * number of <code>columns</code>.
      *
      * @param rows    number of rows.
      * @param columns number of columns.
@@ -68,9 +68,10 @@ public class Matrix extends AbstractMatrix {
     }
 
     @Override
-    public void set(int row, int column, double value) {
+    public IMatrix set(int row, int column, double value) {
         testOutOfBounds(row, column, "set(int,int,double)");
         data[row][column] = value;
+        return this;
     }
 
     /* ---------------------------------------------------------------- */
