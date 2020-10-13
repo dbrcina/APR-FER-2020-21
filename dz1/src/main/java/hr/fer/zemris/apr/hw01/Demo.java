@@ -13,42 +13,71 @@ public class Demo {
     private static final String RESOURCES_FOLDER = "src/main/resources/";
 
     public static void main(String[] args) throws Exception {
-        tasksZeroToSix("02", "02-A.txt", "02-b.txt");
+        task1();
         System.out.println();
         System.out.println("-------------------------------------");
         System.out.println();
-        tasksZeroToSix("03", "03-A.txt", "03-b.txt");
+        tasks2To6("02", "02-A.txt", "02-b.txt");
         System.out.println();
         System.out.println("-------------------------------------");
         System.out.println();
-        tasksZeroToSix("04", "04-A.txt", "04-b.txt");
+        tasks2To6("03", "03-A.txt", "03-b.txt");
         System.out.println();
         System.out.println("-------------------------------------");
         System.out.println();
-        tasksZeroToSix("05", "05-A.txt", "05-b.txt");
+        tasks2To6("04", "04-A.txt", "04-b.txt");
         System.out.println();
         System.out.println("-------------------------------------");
         System.out.println();
-        tasksZeroToSix("06", "06-A.txt", "06-b.txt");
+        tasks2To6("05", "05-A.txt", "05-b.txt");
         System.out.println();
         System.out.println("-------------------------------------");
         System.out.println();
-        tasksSevenToTen("07", "07-A.txt", true);
+        tasks2To6("06", "06-A.txt", "06-b.txt");
         System.out.println();
         System.out.println("-------------------------------------");
         System.out.println();
-        tasksSevenToTen("08", "08-A.txt", true);
+        tasks7To10("07", "07-A.txt", true);
         System.out.println();
         System.out.println("-------------------------------------");
         System.out.println();
-        tasksSevenToTen("09", "09-A.txt", false);
+        tasks7To10("08", "08-A.txt", true);
         System.out.println();
         System.out.println("-------------------------------------");
         System.out.println();
-        tasksSevenToTen("10", "10-A.txt", false);
+        tasks7To10("09", "09-A.txt", false);
+        System.out.println();
+        System.out.println("-------------------------------------");
+        System.out.println();
+        tasks7To10("10", "10-A.txt", false);
     }
 
-    private static void tasksZeroToSix(String taskNum, String matrixATxt, String matrixBTxt) throws Exception {
+    private static void task1() throws Exception {
+        System.out.println("Starting task 01!");
+        IMatrix A = MatrixUtils.parseFromFile(RESOURCES_FOLDER + "02-A.txt");
+        System.out.println("-> \033[1mA\033[0m =");
+        MatrixUtils.printMatrix(A, System.out);
+        double scalar = 5.6789;
+        System.out.println("Multiplying and dividing with " + scalar + ":");
+        IMatrix A2 = A.nScalarMul(scalar).scalarMul(1 / scalar);
+        System.out.println("-> \033[1mA2\033[0m =");
+        MatrixUtils.printMatrix(A2, System.out);
+        System.out.println("Comparing with '==':");
+        System.out.println("\033[1mA\033[0m == \033[1mA2\033[0m? " + greedyEquals(A, A2));
+        System.out.println("Comparing with equals() method:");
+        System.out.println("\033[1mA\033[0m == \033[1mA2\033[0m? " + A.equals(A2));
+    }
+
+    private static boolean greedyEquals(IMatrix A, IMatrix A2) {
+        for (int i = 0; i < A.getRowsCount(); i++) {
+            for (int j = 0; j < A.getColumnsCount(); j++) {
+                if (A.get(i, j) != A2.get(i, j)) return false;
+            }
+        }
+        return true;
+    }
+
+    private static void tasks2To6(String taskNum, String matrixATxt, String matrixBTxt) throws Exception {
         System.out.println("Starting task " + taskNum + "!");
         IMatrix A = MatrixUtils.parseFromFile(RESOURCES_FOLDER + matrixATxt);
         IMatrix b = MatrixUtils.parseFromFile(RESOURCES_FOLDER + matrixBTxt);
@@ -88,7 +117,7 @@ public class Demo {
         }
     }
 
-    private static void tasksSevenToTen(String taskNum, String matrixATxt, boolean inv) throws Exception {
+    private static void tasks7To10(String taskNum, String matrixATxt, boolean inv) throws Exception {
         System.out.println("Starting task " + taskNum + "!");
         IMatrix A = MatrixUtils.parseFromFile(RESOURCES_FOLDER + matrixATxt);
         System.out.println("-> \033[1mA\033[0m =");
