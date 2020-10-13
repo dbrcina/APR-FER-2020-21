@@ -1,4 +1,4 @@
-package hr.fer.zemris.apr.math;
+package hr.fer.zemris.apr.hw01.math;
 
 /**
  * Simple interface that provides some generic methods for matrix manipulation.
@@ -37,6 +37,28 @@ public interface IMatrix {
      * @throws IndexOutOfBoundsException if <code>row</code> or <code>column</code> index is invalid.
      */
     IMatrix set(int row, int column, double value);
+
+    /**
+     * Sets the <code>data</code> at <code>row</code> index.
+     *
+     * @param row  row index.
+     * @param data data.
+     * @return <b>this</b> IMatrix object.
+     * @throws IndexOutOfBoundsException if <code>row</code> index is invalid.
+     * @throws IllegalArgumentException  if provided array is <code>null</code> or array dimensions don't fit.
+     */
+    IMatrix setRow(int row, double[] data);
+
+    /**
+     * Sets the <code>data</code> at <code>column</code> index.
+     *
+     * @param column column index.
+     * @param data   data.
+     * @return <b>this</b> IMatrix object.
+     * @throws IndexOutOfBoundsException if <code>row</code> index is invalid.
+     * @throws IllegalArgumentException  if provided array is <code>null</code> or array dimensions don't fit.
+     */
+    IMatrix setColumn(int column, double[] data);
 
     /**
      * Adds <b>this</b> IMatrix object to <code>other</code> IMatrix object. Method modifies <b>this</b> IMatrix object.
@@ -83,16 +105,16 @@ public interface IMatrix {
      * @param scalar scalar value.
      * @return <b>this</b> IMatrix object.
      */
-    IMatrix scalar(double scalar);
+    IMatrix scalarMul(double scalar);
 
     /**
-     * Creates a new IMatrix object and then applies {@link #scalar(double)} method.
+     * Creates a new IMatrix object and then applies {@link #scalarMul(double)} method.
      *
      * @param scalar scalar value.
      * @return new instance of IMatrix as a result.
      */
-    default IMatrix nScalar(double scalar) {
-        return copy().scalar(scalar);
+    default IMatrix nScalarMul(double scalar) {
+        return copy().scalarMul(scalar);
     }
 
     /**
@@ -127,6 +149,14 @@ public interface IMatrix {
      * @throws IndexOutOfBoundsException if <code>row</code> or <code>column</code> index is invalid.
      */
     IMatrix subMatrix(int row, int column);
+
+    /**
+     * Inverts <b>this</b> IMatrix object if possible.
+     *
+     * @return inverted <b>this</b> IMatrix object.
+     * @throws RuntimeException if matrix is not a square matrix or if matrix is singular.
+     */
+    IMatrix invert();
 
     /**
      * Swaps row <code>r1</code> with row <code>r2</code>.
@@ -168,5 +198,12 @@ public interface IMatrix {
      * @throws IllegalArgumentException if value < 1 is provided.
      */
     IMatrix newInstance(int rows, int columns);
+
+    /**
+     * @param row row index.
+     * @return row data at <code>row</code> index.
+     * @throws IndexOutOfBoundsException if <code>row</code> index is invalid.
+     */
+    double[] rowData(int row);
 
 }

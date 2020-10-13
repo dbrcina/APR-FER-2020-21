@@ -1,4 +1,4 @@
-package hr.fer.zemris.apr.math;
+package hr.fer.zemris.apr.hw01.math;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -74,6 +74,35 @@ public class Matrix extends AbstractMatrix {
         return this;
     }
 
+    @Override
+    public IMatrix setRow(int row, double[] data) {
+        testOutOfBounds(row, 0, "setRow(int,double[])");
+        if (data == null) {
+            throw new IllegalArgumentException("Matrix::setRow(int,double[]) data array is null!");
+        }
+        if (data.length != getColumnsCount()) {
+            throw new IllegalArgumentException("Matrix::setRow(int,double[]) dimensions of data array don't fit!");
+        }
+        this.data[row] = data;
+        return this;
+    }
+
+    @Override
+    public IMatrix setColumn(int column, double[] data) {
+        testOutOfBounds(0, column, "setColumn(int,double[])");
+        if (data == null) {
+            throw new IllegalArgumentException("Matrix::setColumn(int,double[]) data array is null!");
+        }
+        if (data.length != getColumnsCount()) {
+            throw new IllegalArgumentException("Matrix::setColumn(int,double[]) dimensions of data array don't fit!");
+        }
+        for (int i = 0; i < getRowsCount(); i++) {
+            this.data[i][column] = data[i];
+        }
+        return this;
+    }
+
+
     /* ---------------------------------------------------------------- */
     /* ---------------------- MANIPULATION METHODS -------------------- */
 
@@ -99,6 +128,12 @@ public class Matrix extends AbstractMatrix {
     @Override
     public IMatrix newInstance(int rows, int columns) {
         return new Matrix(rows, columns);
+    }
+
+    @Override
+    public double[] rowData(int row) {
+        testOutOfBounds(row, 0, "rowData(int)");
+        return data[row];
     }
 
 }

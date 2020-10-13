@@ -1,4 +1,4 @@
-package hr.fer.zemris.apr.math;
+package hr.fer.zemris.apr.hw01.math;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,7 +46,7 @@ public class IMatrixTest {
     @Test
     public void testScalar() throws Exception {
         IMatrix aScalar3Txt = MatrixUtils.parseFromFile(RESOURCES_DIR + "3.0a.txt");
-        IMatrix aScalar3 = a.nScalar(3);
+        IMatrix aScalar3 = a.nScalarMul(3);
         Assert.assertEquals(aScalar3Txt, aScalar3);
     }
 
@@ -56,6 +56,13 @@ public class IMatrixTest {
         IMatrix[] results = MatrixUtils.luDecomposition(c.copy(), true);
         double lupDet = MatrixUtils.lupDeterminant(results[2].getNumOfRowsSwapped(), results[0], results[1]);
         Assert.assertEquals(classicDet, lupDet, MatrixUtils.DELTA);
+    }
+
+    @Test
+    public void testInvert() {
+        IMatrix classicInvert = c.invert();
+        IMatrix lupInvert = MatrixUtils.lupInvert(c);
+        Assert.assertEquals(classicInvert, lupInvert);
     }
 
 }

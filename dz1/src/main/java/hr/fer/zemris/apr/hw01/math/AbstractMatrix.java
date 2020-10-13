@@ -1,4 +1,4 @@
-package hr.fer.zemris.apr.math;
+package hr.fer.zemris.apr.hw01.math;
 
 /**
  * An abstract implementation of {@link IMatrix} interface.
@@ -32,7 +32,7 @@ public abstract class AbstractMatrix implements IMatrix {
     }
 
     @Override
-    public IMatrix scalar(double scalar) {
+    public IMatrix scalarMul(double scalar) {
         for (int i = 0; i < getRowsCount(); i++) {
             for (int j = 0; j < getColumnsCount(); j++) {
                 set(i, j, get(i, j) * scalar);
@@ -73,13 +73,9 @@ public abstract class AbstractMatrix implements IMatrix {
     public double determinant() {
         testSquareMatrix("determinant()");
         if (getRowsCount() == 1) return get(0, 0);
-        int sign = 1;
         double result = 0.0;
         for (int i = 0; i < getRowsCount(); i++) {
-            double minor = subMatrix(0, i).determinant();
-            double cofactor = sign * minor;
-            result += get(0, i) * cofactor;
-            sign *= -1;
+            result += get(0, i) * calculateCofactor(0, i);
         }
         return result;
     }
@@ -96,6 +92,37 @@ public abstract class AbstractMatrix implements IMatrix {
             r++;
         }
         return result;
+    }
+
+    @Override
+    public IMatrix invert() {
+        double determinant = determinant();
+        if (determinant == 0) {
+            throw new RuntimeException(getClass().getSimpleName() + "::invert() matrix is singular!");
+        }
+        IMatrix adJoint = findAdJointMatrix();
+        return adJoint.scalarMul(1 / determinant);
+    }
+
+    /* Method is self-explanatory... */
+    private IMatrix findAdJointMatrix() {
+        if (getRowsCount() == 1) {
+            return this;
+        }
+        IMatrix result = newInstance(getRowsCount(), getColumnsCount());
+        for (int i = 0; i < getRowsCount(); i++) {
+            for (int j = 0; j < getColumnsCount(); j++) {
+                result.set(i, j, calculateCofactor(i, j));
+            }
+        }
+        return result.transpose();
+    }
+
+    /* Calculates Cij... */
+    private double calculateCofactor(int i, int j) {
+        double minor = subMatrix(i, j).determinant();
+        int sign = (i + j) % 2 == 0 ? 1 : -1;
+        return sign * minor;
     }
 
     @Override

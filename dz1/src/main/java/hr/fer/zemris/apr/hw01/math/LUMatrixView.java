@@ -1,4 +1,4 @@
-package hr.fer.zemris.apr.math;
+package hr.fer.zemris.apr.hw01.math;
 
 /**
  * An implementation of LU matrix view that is used in <b>LU(P) Decomposition</b>.
@@ -42,6 +42,16 @@ public class LUMatrixView extends AbstractMatrix {
         throw new RuntimeException("LUMatrixView::set(int,int,double) is not supported!");
     }
 
+    @Override
+    public IMatrix setRow(int row, double[] data) {
+        throw new RuntimeException("LUMatrixView::setRow(int,double[]) is not supported!");
+    }
+
+    @Override
+    public IMatrix setColumn(int column, double[] data) {
+        throw new RuntimeException("LUMatrixView::setColumn(int,double[]) is not supported!");
+    }
+
     /* The determinant of triangular matrices is equal to the product of the elements on the diagonals. */
     @Override
     public double determinant() {
@@ -67,6 +77,11 @@ public class LUMatrixView extends AbstractMatrix {
     @Override
     public IMatrix newInstance(int rows, int columns) {
         throw new RuntimeException("LUMatrixView::newInstance(int,int) is not supported!");
+    }
+
+    @Override
+    public double[] rowData(int row) {
+        return matrix.rowData(row);
     }
 
 }

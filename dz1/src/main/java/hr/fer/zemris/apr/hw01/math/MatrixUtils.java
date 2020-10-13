@@ -1,10 +1,11 @@
-package hr.fer.zemris.apr.math;
+package hr.fer.zemris.apr.hw01.math;
 
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,11 @@ public class MatrixUtils {
      */
     public static double DELTA = 1e-9;
 
+    /**
+     * Creates identity vector <code>i</code> with provided dimension <code>n</code>.
+     */
+    public static final BiFunction<Integer, Integer, IMatrix> IDENTITY_VECTOR =
+            (i, n) -> new Matrix(n, 1).set(i, 0, 1);
     /**
      * Creates identity matrix with provided dimension <code>n</code>.
      */
@@ -205,6 +211,33 @@ public class MatrixUtils {
      */
     public static double lupDeterminant(int numOfRowsSwapped, IMatrix L, IMatrix U) {
         return Math.pow(-1, numOfRowsSwapped) * L.determinant() * U.determinant();
+    }
+
+    /**
+     * Calculates matrix inverse operation of provided matrix <code>A</code> using one <b>LUP Decomposition</b> and
+     * <code>n</code> <b>forward/backward substitutions</b> where <code>n</code> is dimension of square matrix
+     * <code>A</code>.
+     *
+     * @param A square matrix.
+     * @return inverted matrix.
+     * @throws IllegalArgumentException if provided matrix <code>A</code> is not square matrix.
+     * @see #luDecomposition(IMatrix, boolean)
+     * @see #fs(IMatrix, IMatrix)
+     * @see #bs(IMatrix, IMatrix)
+     */
+    public static IMatrix lupInvert(IMatrix A) {
+        if (!A.isSquareMatrix()) {
+            throw new IllegalArgumentException(
+                    "MatrixUtils::lupInvert(IMatrix) cannot be performed on non square matrix!");
+        }
+        IMatrix[] lup = luDecomposition(A, true); // 0:L, 1:U, 2:P
+        int n = A.getRowsCount();
+        IMatrix inverted = A.newInstance(n, n);
+        for (int i = 0; i < n; i++) {
+            IMatrix xi = bs(lup[1], fs(lup[0], lup[2].mul(IDENTITY_VECTOR.apply(i, n)))).transpose();
+            inverted.setRow(i, xi.rowData(0));
+        }
+        return inverted.transpose();
     }
 
 }
