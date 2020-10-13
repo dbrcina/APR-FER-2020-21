@@ -137,6 +137,7 @@ public class MatrixUtils {
      * @return IMatrix as a result of substitution.
      * @throws IllegalArgumentException if matrix <code>U</code> is not square matrix or if dimensions of vector
      *                                  <code>y</code> don't fit.
+     * @throws ArithmeticException      division by zero occurs.
      */
     public static IMatrix bs(IMatrix U, IMatrix y) {
         if (!U.isSquareMatrix()) {
@@ -147,6 +148,12 @@ public class MatrixUtils {
             throw new IllegalArgumentException("MatrixUtils::bs(IMatrix,IMatrix) vectors y dimensions are invalid!");
         }
         for (int i = U.getRowsCount() - 1; i >= 0; i--) {
+            if (Math.abs(U.get(i, i)) <= DELTA) {
+                throw new ArithmeticException(String.format(
+                        "MatrixUtils::bs(IMatrix,IMatrix) division by zero! Element at index [%d][%d] is zero!",
+                        i, i)
+                );
+            }
             for (int j = i + 1; j < U.getRowsCount(); j++) {
                 y.set(i, 0, y.get(i, 0) - U.get(i, j) * y.get(j, 0));
             }
@@ -182,16 +189,16 @@ public class MatrixUtils {
                         maxPivotRowIndex = j;
                     }
                 }
-                if (Math.abs(maxPivot) <= DELTA) {
-                    throw new ArithmeticException("MatrixUtils::luDecomposition(IMatrix,boolean) pivot is zero!");
-                }
                 A.swapRows(maxPivotRowIndex, i);
                 P.swapRows(maxPivotRowIndex, i);
             }
+            if (Math.abs(A.get(i, i)) <= DELTA) {
+                throw new ArithmeticException(String.format(
+                        "MatrixUtils::luDecomposition(IMatrix,boolean) pivot at index [%d][%d] is zero!",
+                        i, i)
+                );
+            }
             for (int j = i + 1; j < A.getRowsCount(); j++) {
-                if (Math.abs(A.get(i, i)) <= DELTA) {
-                    throw new ArithmeticException("MatrixUtils::luDecomposition(IMatrix,boolean) pivot is zero!");
-                }
                 A.set(j, i, A.get(j, i) / A.get(i, i));
                 for (int k = i + 1; k < A.getRowsCount(); k++) {
                     A.set(j, k, A.get(j, k) - A.get(j, i) * A.get(i, k));
