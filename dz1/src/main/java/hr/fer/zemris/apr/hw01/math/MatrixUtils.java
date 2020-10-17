@@ -22,7 +22,7 @@ public class MatrixUtils {
     /**
      * Global variable used for double comparison and it can be changed if needed.
      */
-    public static double DELTA = 1e-9;
+    public static double DELTA = 1e-12;
 
     /**
      * Creates identity vector <code>i</code> with provided dimension <code>n</code>.
@@ -242,9 +242,9 @@ public class MatrixUtils {
         IMatrix inverted = A.newInstance(n, n);
         for (int i = 0; i < n; i++) {
             IMatrix xi = bs(lup[1], fs(lup[0], lup[2].mul(IDENTITY_VECTOR.apply(i, n)))).transpose();
-            inverted.setRow(i, xi.rowData(0));
+            inverted.setColumn(i, xi.rowData(0));
         }
-        return inverted.transpose();
+        return inverted;
     }
 
 }
