@@ -3,8 +3,8 @@ package hr.fer.zemris.apr.hw02.optimization;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 /**
- * Simulates an optimization algorithm that contains {@link #configure(String)} method and {@link #run(IFunction)}
- * method.
+ * Simulates an optimization algorithm that contains {@link #configure(String)} and {@link #run(IFunction)}
+ * methods.
  *
  * @author dbrcina
  */
