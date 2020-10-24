@@ -6,7 +6,15 @@ import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * An abstract implementation of {@link IOptAlgorithm} interface.
+ * An abstract implementation of {@link IOptAlgorithm} interface. All optimization algorithms consist of this must
+ * have properties (along with personal properties):
+ * <ul>
+ *     <li>initial point vector - <i>double[]</i>,</li>
+ *     <li>epsilons vector - <i>double[]</i>,</li>
+ *     <li>verbose - <i>boolean</i>, if set to <code>true</code>, results are printed in each iteration of optimization
+ *     algorithm.</li>
+ * </ul>
+ * Properties are accessible through certain getters/setters methods.
  *
  * @author dbrcina
  */
@@ -14,13 +22,9 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
 
     private final static double DEFAULT_EPSILON = 1e-6;
 
-    /*
-     * Initial point and epsilon values are shared among all optimization algorithms,
-     * so they are initialized in configure method where initial point must be provided!
-     */
     private double[] initialPoint;
-    /* Vector of epsilons. Default values are set to DEFAULT_EPSILON. */
     private double[] epsilons;
+    private boolean verbose;
 
     @Override
     public void configure(String configFile) throws Exception {
@@ -64,12 +68,34 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
         throw new ConfigFileException(msg);
     }
 
-    protected double[] getInitialPoint() {
+    /**
+     * @return initial point vector.
+     */
+    public double[] getInitialPoint() {
         return initialPoint;
     }
 
-    protected double[] getEpsilons() {
+    /**
+     * @return epsilons vector.
+     */
+    public double[] getEpsilons() {
         return epsilons;
+    }
+
+    /**
+     * @return whether verbose flag is set for <b>this</b> optimization algorithm.
+     */
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    /**
+     * Setts verbose flag.
+     *
+     * @param verbose verbose flag.
+     */
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
 }

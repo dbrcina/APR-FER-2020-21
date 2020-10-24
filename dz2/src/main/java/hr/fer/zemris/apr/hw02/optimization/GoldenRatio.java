@@ -26,8 +26,6 @@ public class GoldenRatio extends AbstractOptAlgorithm {
 
     /* Unimodal interval used in golden ratio algorithm. */
     private double[] interval;
-    /* Flag used for printing results in every iteration of algorithm. */
-    private boolean verbose;
 
     /* Constructor is private because of singleton design pattern. */
     private GoldenRatio() {
@@ -36,12 +34,13 @@ public class GoldenRatio extends AbstractOptAlgorithm {
     /**
      * @param verbose verbose flag used for printing results in every iteration of algorithm.
      * @return an instance of GoldenRatio class.
+     * @see AbstractOptAlgorithm
      */
     public static GoldenRatio getInstance(boolean verbose) {
         if (instance == null) {
             instance = new GoldenRatio();
         }
-        instance.verbose = verbose;
+        instance.setVerbose(verbose);
         return instance;
     }
 
@@ -83,7 +82,7 @@ public class GoldenRatio extends AbstractOptAlgorithm {
         double epsilon = getEpsilons()[0];
         int i = 1;
         while ((b - a) > epsilon) {
-            if (verbose) {
+            if (isVerbose()) {
                 printResults(i++, a, b, c, d, fa, fb, fc, fd);
             }
             if (fc < fd) {
