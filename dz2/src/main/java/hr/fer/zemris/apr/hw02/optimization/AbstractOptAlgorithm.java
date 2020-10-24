@@ -44,6 +44,23 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
         }
     }
 
+    /**
+     * Formats a configuration exception message for {@link #configure(String)} method.
+     *
+     * @param configFile configuration file.
+     * @param e          exception.
+     * @throws ConfigFileException after formatting exception message.
+     */
+    protected void handleConfigureExceptions(String configFile, Exception e) throws ConfigFileException {
+        String methodName = getClass().getSimpleName() + "::configure(String)";
+        String msg = String.format("%s configuration file '%s' is invalid!", methodName, configFile);
+        // Additional message is expected when ConfigFileException is thrown!
+        if (e instanceof ConfigFileException) {
+            msg += " " + e.getMessage();
+        }
+        throw new ConfigFileException(msg);
+    }
+
     protected double[] getInitialPoint() {
         return initialPoint;
     }

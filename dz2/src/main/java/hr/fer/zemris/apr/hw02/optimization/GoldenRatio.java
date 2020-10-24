@@ -61,12 +61,7 @@ public class GoldenRatio extends AbstractOptAlgorithm {
                         .toArray();
             }
         } catch (NumberFormatException | ConfigFileException e) {
-            String msg = "GoldenRatio::configure(String) configuration file '" + configFile + "' is invalid!";
-            // Additional message is expected when ConfigFileException is thrown!
-            if (e instanceof ConfigFileException) {
-                msg += " " + e.getMessage();
-            }
-            throw new ConfigFileException(msg);
+            handleConfigureExceptions(configFile, e);
         }
     }
 
