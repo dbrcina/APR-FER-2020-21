@@ -3,8 +3,22 @@ package hr.fer.zemris.apr.hw02.optimization;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 /**
- * Simulates an optimization algorithm that contains {@link #configure(String)} and {@link #run(IFunction)}
- * methods.
+ * <p>
+ * Simulates an optimization algorithm. All optimization algorithms consist of these must
+ * have properties (along with personal properties):
+ * <ul>
+ *     <li>initial point vector - <i>double[]</i>,</li>
+ *     <li>epsilons vector - <i>double[]</i>,</li>
+ *     <li>verbose - <i>boolean</i>, if set to <code>true</code>, results of optimization algorithm are printed in
+ *     each iteration,</li>
+ *     <li>number of iterations - <i>integer</i>.</li>
+ * </ul>
+ * Properties are accessible through certain getters/setters methods.
+ * </p>
+ *
+ * <p>
+ * Instances can be accessed through {@link IOptAlgorithmProvider} class.
+ * </p>
  *
  * @author dbrcina
  */
@@ -25,5 +39,17 @@ public interface IOptAlgorithm {
      * @return the optimal point as a result.
      */
     double[] run(IFunction function);
+
+    /**
+     * @return number of iterations.
+     */
+    int numberOfIterations();
+
+    /**
+     * Setts verbose flag.
+     *
+     * @param verbose verbose flag.
+     */
+    void setVerbose(boolean verbose);
 
 }

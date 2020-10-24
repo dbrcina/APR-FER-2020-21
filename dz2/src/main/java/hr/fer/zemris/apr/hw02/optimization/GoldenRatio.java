@@ -8,14 +8,12 @@ import java.util.Properties;
 import java.util.function.BiFunction;
 
 /**
- * An implementation of <i>Golden ratio</i> optimization algorithm. It is modeled as a singleton object and its
- * instance can be obtained by {@link #getInstance(boolean)} method.
+ * An implementation of <i>Golden ratio</i> optimization algorithm.
  *
  * @author dbrcina
+ * @see IOptAlgorithm
  */
 public class GoldenRatio extends AbstractOptAlgorithm {
-
-    private static GoldenRatio instance;
 
     /* Golden ration constant. */
     private static final double K = 0.5 * (Math.sqrt(5) - 1);
@@ -26,23 +24,6 @@ public class GoldenRatio extends AbstractOptAlgorithm {
 
     /* Unimodal interval used in golden ratio algorithm. */
     private double[] interval;
-
-    /* Constructor is private because of singleton design pattern. */
-    private GoldenRatio() {
-    }
-
-    /**
-     * @param verbose verbose flag used for printing results in every iteration of algorithm.
-     * @return an instance of GoldenRatio class.
-     * @see AbstractOptAlgorithm
-     */
-    public static GoldenRatio getInstance(boolean verbose) {
-        if (instance == null) {
-            instance = new GoldenRatio();
-        }
-        instance.setVerbose(verbose);
-        return instance;
-    }
 
     @Override
     public void configure(String configFile) throws Exception {
@@ -65,7 +46,7 @@ public class GoldenRatio extends AbstractOptAlgorithm {
 
     @Override
     public double[] run(IFunction function) {
-        System.out.println("Running Golden Ratio optimization algorithm:");
+        super.run(function);
         if (interval == null) {
             // Initial point is an array with the length of 1.
             interval = UnimodalInterval.create(function, getInitialPoint()[0]);
@@ -74,16 +55,16 @@ public class GoldenRatio extends AbstractOptAlgorithm {
         double b = interval[1];
         double c = C.apply(a, b);
         double d = D.apply(a, b);
-        double fa = function.value(new double[]{a});
-        double fb = function.value(new double[]{b});
         double fc = function.value(new double[]{c});
         double fd = function.value(new double[]{d});
         // Epsilons is an array with the length of 1.
         double epsilon = getEpsilons()[0];
-        int i = 1;
         while ((b - a) > epsilon) {
+            incrementIterations();
             if (isVerbose()) {
-                printResults(i++, a, b, c, d, fa, fb, fc, fd);
+                double fa = function.value(new double[]{a});
+                double fb = function.value(new double[]{b});
+                printResults(numberOfIterations(), a, b, c, d, fa, fb, fc, fd);
             }
             if (fc < fd) {
                 b = d;
@@ -91,14 +72,12 @@ public class GoldenRatio extends AbstractOptAlgorithm {
                 c = C.apply(a, b);
                 fd = fc;
                 fc = function.value(new double[]{c});
-                fb = function.value(new double[]{b});
             } else {
                 a = c;
                 c = d;
                 d = D.apply(a, b);
                 fc = fd;
                 fd = function.value(new double[]{d});
-                fa = function.value(new double[]{a});
             }
         }
         return new double[]{(a + b) / 2};
