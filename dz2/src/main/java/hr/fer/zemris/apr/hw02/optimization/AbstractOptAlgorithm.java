@@ -14,7 +14,7 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
 
     /*
      * Initial point and epsilon values are shared among all optimization algorithms,
-     * so they are initialized in configure method where initial point is a must!
+     * so they are initialized in configure method where initial point must be provided!
      */
     private double[] initialPoint;
     private double[] epsilons; // default values are 1e-6
@@ -29,6 +29,9 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
             initialPoint = Arrays.stream(((String) initialPointObj).split("\\s+"))
                     .mapToDouble(Double::parseDouble)
                     .toArray();
+        }
+        if (initialPoint == null) {
+            throw new ConfigFileException("Initial point must be provided!");
         }
         Object epsilonObj = properties.get("epsilons");
         if (epsilonObj != null) {
