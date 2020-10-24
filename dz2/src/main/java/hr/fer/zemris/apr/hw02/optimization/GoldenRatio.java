@@ -19,11 +19,10 @@ public class GoldenRatio extends AbstractOptAlgorithm {
 
     /* Golden ration constant. */
     private static final double K = 0.5 * (Math.sqrt(5) - 1);
-
     /* BiFunction used for calculating c value in golden ration algorithm. */
-    private final BiFunction<Double, Double, Double> C = (a, b) -> b - K * (b - a);
+    private static final BiFunction<Double, Double, Double> C = (a, b) -> b - K * (b - a);
     /* BiFunction used for calculating d value in golden ration algorithm. */
-    private final BiFunction<Double, Double, Double> D = (a, b) -> a + K * (b - a);
+    private static final BiFunction<Double, Double, Double> D = (a, b) -> a + K * (b - a);
 
     /* Unimodal interval used in golden ratio algorithm. */
     private double[] interval;

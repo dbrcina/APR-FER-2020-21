@@ -12,12 +12,15 @@ import java.util.Properties;
  */
 public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
 
+    private final static double DEFAULT_EPSILON = 1e-6;
+
     /*
      * Initial point and epsilon values are shared among all optimization algorithms,
      * so they are initialized in configure method where initial point must be provided!
      */
     private double[] initialPoint;
-    private double[] epsilons; // default values are 1e-6
+    /* Vector of epsilons. Default values are set to DEFAULT_EPSILON. */
+    private double[] epsilons;
 
     @Override
     public void configure(String configFile) throws Exception {
@@ -40,7 +43,7 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
                     .toArray();
         } else {
             epsilons = new double[initialPoint.length];
-            Arrays.fill(epsilons, 1e-6);
+            Arrays.fill(epsilons, DEFAULT_EPSILON);
         }
     }
 
