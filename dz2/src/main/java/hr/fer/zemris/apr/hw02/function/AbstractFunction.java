@@ -1,7 +1,5 @@
 package hr.fer.zemris.apr.hw02.function;
 
-import hr.fer.zemris.apr.hw01.math.IMatrix;
-
 /**
  * An abstract implementation of {@link IFunction} interface.
  *
@@ -23,17 +21,17 @@ public abstract class AbstractFunction implements IFunction {
 
     /**
      * Utility method used for testing the <code>point</code>'s dimension. It gets called every time when
-     * {@link #value(IMatrix)} is invoked and if test passes, the number of calls variable gets updated.
+     * {@link #value(double[])} is invoked and if test passes, the number of calls variable gets updated.
      *
-     * @param point IMatrix point.
-     * @param n     number of rows expected.
-     * @throws IllegalArgumentException if the point is not <code>nx1</code> matrix.
+     * @param point point.
+     * @param n     dimension.
+     * @throws IllegalArgumentException if the point is not a <code>n</code> dimensional array.
      */
-    protected void testValuePointDimension(IMatrix point, int n) {
-        if (point.getRowsCount() != n || point.getColumnsCount() != 1) {
+    protected void testValuePointDimension(double[] point, int n) {
+        if (point.length != n) {
             String methodName = getClass().getSimpleName() + "::value(IMatrix)";
             throw new IllegalArgumentException(String.format(
-                    "%s point with dimensions %dx1 is expected!",
+                    "%s %d dimensional array is expected!",
                     methodName, n)
             );
         }
