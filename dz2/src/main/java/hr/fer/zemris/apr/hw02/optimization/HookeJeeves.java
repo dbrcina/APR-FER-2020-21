@@ -10,6 +10,7 @@ import java.util.Properties;
  * An implementation of <i>Hooke-Jeeves</i> optimization algorithm.
  *
  * @author dbrcina
+ * @see IOptAlgorithm
  */
 public class HookeJeeves extends AbstractOptAlgorithm {
 
@@ -49,8 +50,8 @@ public class HookeJeeves extends AbstractOptAlgorithm {
         double[] x0 = getInitialPoint();
         double[] xB = Arrays.copyOf(x0, x0.length);
         double[] xP = Arrays.copyOf(x0, x0.length);
-        while (!deltasLEQEpsilons()) {
-            incrementIterations();
+        while (!vectorLEQEpsilons(deltas)) {
+            incrementIterations(1);
             double[] xN = search(function, xP);
             double N = function.value(xN);
             double B = function.value(xB);
@@ -70,15 +71,6 @@ public class HookeJeeves extends AbstractOptAlgorithm {
             }
         }
         return xB;
-    }
-
-    /**
-     * @return <code>true</code> if deltas vector is lower than or equal to epsilons vector.
-     */
-    private boolean deltasLEQEpsilons() {
-        double[] epsilons = getEpsilons();
-        // L2 norm.
-        return Arrays.stream(deltas).map(d -> d * d).sum() <= Arrays.stream(epsilons).map(e -> e * e).sum();
     }
 
     /**

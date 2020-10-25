@@ -20,6 +20,7 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     private double[] epsilons;
     private boolean verbose;
     private int iterations;
+    private boolean configured;
 
     /* Constructor is protected because of the singleton design pattern. */
     protected AbstractOptAlgorithm() {
@@ -51,6 +52,7 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
             epsilons = new double[initialPoint.length];
             Arrays.fill(epsilons, DEFAULT_EPSILON);
         }
+        configured = true;
     }
 
     @Override
@@ -68,6 +70,11 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     @Override
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
+    }
+
+    @Override
+    public boolean isConfigured() {
+        return configured;
     }
 
     /**
@@ -88,10 +95,31 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     }
 
     /**
+     * L2-norm is used to calculate values.
+     *
+     * @param vector vector.
+     * @return <code>true</code> if the vector is lower than or equal to epsilons vector.
+     */
+    protected boolean vectorLEQEpsilons(double[] vector) {
+        double vectorNorm = Math.sqrt(Arrays.stream(vector).map(v -> v * v).sum());
+        double epsilonsNorm = Math.sqrt(Arrays.stream(epsilons).map(e -> e * e).sum());
+        return vectorNorm <= epsilonsNorm;
+    }
+
+    /**
      * @return initial point vector.
      */
     protected double[] getInitialPoint() {
         return initialPoint;
+    }
+
+    /**
+     * Setter for initial point.
+     *
+     * @param initialPoint initial point vector.
+     */
+    protected void setInitialPoint(double[] initialPoint) {
+        this.initialPoint = initialPoint;
     }
 
     /**
@@ -102,6 +130,15 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     }
 
     /**
+     * Setter for epsilons.
+     *
+     * @param epsilons epsilons vector.
+     */
+    protected void setEpsilons(double[] epsilons) {
+        this.epsilons = epsilons;
+    }
+
+    /**
      * @return whether verbose flag is set for <b>this</b> optimization algorithm.
      */
     protected boolean isVerbose() {
@@ -109,10 +146,12 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     }
 
     /**
-     * Increments iterations variable by 1.
+     * Increments iterations variable by provided <code>i</code>.
+     *
+     * @param i increment i.
      */
-    protected void incrementIterations() {
-        iterations++;
+    protected void incrementIterations(int i) {
+        iterations += i;
     }
 
 }

@@ -60,7 +60,7 @@ public class GoldenRatio extends AbstractOptAlgorithm {
         // Epsilons is an array with the length of 1.
         double epsilon = getEpsilons()[0];
         while ((b - a) > epsilon) {
-            incrementIterations();
+            incrementIterations(1);
             if (isVerbose()) {
                 double fa = function.value(new double[]{a});
                 double fb = function.value(new double[]{b});

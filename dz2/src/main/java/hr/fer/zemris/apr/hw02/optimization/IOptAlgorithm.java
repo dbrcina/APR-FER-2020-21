@@ -11,7 +11,9 @@ import hr.fer.zemris.apr.hw02.function.IFunction;
  *     <li>epsilons vector - <i>double[]</i>,</li>
  *     <li>verbose - <i>boolean</i>, if set to <code>true</code>, results of optimization algorithm are printed in
  *     each iteration,</li>
- *     <li>number of iterations - <i>integer</i>.</li>
+ *     <li>number of iterations - <i>integer</i>,</li>
+ *     <li>configured - <i>boolean</i> - if set to <code>true</code>, then algorithm has been configured through
+ *     {@link #configure(String)} method.</li>
  * </ul>
  * Properties are accessible through certain getters/setters methods.
  * </p>
@@ -51,5 +53,11 @@ public interface IOptAlgorithm {
      * @param verbose verbose flag.
      */
     void setVerbose(boolean verbose);
+
+    /**
+     * @return <code>true</code> if <b>this</b> optimization algorithm has been configured through
+     * {@link #configure(String)} method.
+     */
+    boolean isConfigured();
 
 }
