@@ -21,8 +21,8 @@ public class IOptAlgorithmProvider {
      * Retrieves an implementation of IOptAlgorithm interface whose simple class name is equal to the provided one and
      * stores it in an internal map for the future. Instances of classes are created through the <i>Reflection API</i>.
      * <br>
-     * When an implementation is returned, be sure to use {@link IOptAlgorithm#configure(String)} method or certain
-     * setters to configure that algorithm.
+     * When an implementation is returned, be sure to use {@link IOptAlgorithm#configure(java.util.Properties)} method
+     * or certain setters to configure that algorithm.
      *
      * @param simpleClassName simple class name that implements some optimization algorithm.
      * @return an instance of IOptAlgorithm interface.

@@ -15,7 +15,7 @@ import java.util.Properties;
  *     each iteration,</li>
  *     <li>number of iterations - <i>integer</i>,</li>
  *     <li>configured - <i>boolean</i> - if set to <code>true</code>, then algorithm has been configured through
- *     {@link #configure(String)} method.</li>
+ *     {@link #configure(Properties)} method.</li>
  * </ul>
  * Properties are accessible through certain getters/setters methods.
  * </p>

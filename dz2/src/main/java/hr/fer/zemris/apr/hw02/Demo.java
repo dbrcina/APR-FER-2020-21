@@ -26,10 +26,10 @@ public class Demo {
         System.out.println();
         System.out.println("-------------------------------------------");
         System.out.println();
-//        task2();
-//        System.out.println();
-//        System.out.println("-------------------------------------------");
-//        System.out.println();
+        task2();
+        System.out.println();
+        System.out.println("-------------------------------------------");
+        System.out.println();
     }
 
     private static void task1() throws Exception {
