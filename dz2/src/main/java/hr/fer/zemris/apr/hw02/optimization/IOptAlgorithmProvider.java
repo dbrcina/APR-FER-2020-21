@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * Provider for implementations of {@link IOptAlgorithm} interface. Instances are accessible through
- * {@link #getInstance(String)} method. This is a simple model of the singleton design pattern.
+ * {@link #getInstance(String)} method. This is a simple model of the singleton/factory design pattern.
  *
  * @author dbrcina
  */
@@ -20,8 +20,11 @@ public class IOptAlgorithmProvider {
     /**
      * Retrieves an implementation of IOptAlgorithm interface whose simple class name is equal to the provided one and
      * stores it in an internal map for the future. Instances of classes are created through the <i>Reflection API</i>.
+     * <br>
+     * When an implementation is returned, be sure to use {@link IOptAlgorithm#configure(String)} method or certain
+     * setters to configure that algorithm.
      *
-     * @param simpleClassName simple class name.
+     * @param simpleClassName simple class name that implements some optimization algorithm.
      * @return an instance of IOptAlgorithm interface.
      * @throws Exception if errors occurs while creating an instance of an IOptAlgorithm interface through the
      *                   <i>Reflection API</i>.

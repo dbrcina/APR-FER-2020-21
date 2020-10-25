@@ -4,6 +4,7 @@ import hr.fer.zemris.apr.hw02.function.AbstractFunction;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * An implementation of <i>Coordinate search</i> optimization algorithm.
@@ -13,9 +14,19 @@ import java.util.Arrays;
  */
 public class CoordinateSearch extends AbstractOptAlgorithm {
 
+    /**
+     * @see AbstractOptAlgorithm#AbstractOptAlgorithm()
+     */
+    protected CoordinateSearch() {
+    }
+
     @Override
-    public void configure(String configFile) throws Exception {
-        super.configure(configFile);
+    public void configure(Properties properties) throws Exception {
+        try {
+            super.configure(properties);
+        } catch (NumberFormatException | ConfigInvalidException e) {
+            handleConfigureExceptions(e);
+        }
     }
 
     @Override

@@ -25,13 +25,17 @@ public class GoldenRatio extends AbstractOptAlgorithm {
     /* Unimodal interval used in golden ratio algorithm. */
     private double[] interval;
 
+    /**
+     * @see AbstractOptAlgorithm#AbstractOptAlgorithm()
+     */
+    protected GoldenRatio() {
+    }
+
     @Override
-    public void configure(String configFile) throws Exception {
+    public void configure(Properties properties) throws Exception {
         try {
-            super.configure(configFile);
+            super.configure(properties);
             interval = null;
-            // Config file is already loaded in super class.
-            Properties properties = PropertiesProvider.getProperties();
             Object intervalObj = properties.get("interval");
             if (intervalObj != null) {
                 interval = Arrays.stream(((String) intervalObj).split("\\s+"))
@@ -39,8 +43,8 @@ public class GoldenRatio extends AbstractOptAlgorithm {
                         .sorted()
                         .toArray();
             }
-        } catch (NumberFormatException | ConfigFileException e) {
-            handleConfigureExceptions(configFile, e);
+        } catch (NumberFormatException | ConfigInvalidException e) {
+            handleConfigureExceptions(e);
         }
     }
 

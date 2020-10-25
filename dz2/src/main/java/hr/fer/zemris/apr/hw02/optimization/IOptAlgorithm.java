@@ -2,6 +2,8 @@ package hr.fer.zemris.apr.hw02.optimization;
 
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
+import java.util.Properties;
+
 /**
  * <p>
  * Simulates an optimization algorithm. All optimization algorithms consist of these must
@@ -27,12 +29,12 @@ import hr.fer.zemris.apr.hw02.function.IFunction;
 public interface IOptAlgorithm {
 
     /**
-     * Configures <b>this</b> optimization algorithm based on provided <code>configFile</code>.
+     * Configures <b>this</b> optimization algorithm based on provided <code>properties</code> object.
      *
-     * @param configFile configuration file.
-     * @throws Exception if errors occurs while reading from a file or if the configuration file is invalid.
+     * @param properties properties object.
+     * @throws Exception if configuration is invalid.
      */
-    void configure(String configFile) throws Exception;
+    void configure(Properties properties) throws Exception;
 
     /**
      * Executes <b>this</b> optimization algorithm on provided <code>function</code>.
@@ -43,9 +45,33 @@ public interface IOptAlgorithm {
     double[] run(IFunction function);
 
     /**
-     * @return number of iterations.
+     * @return initial point vector.
      */
-    int numberOfIterations();
+    double[] getInitialPoint();
+
+    /**
+     * Setter for initial point vector.
+     *
+     * @param initialPoint initial point vector.
+     */
+    void setInitialPoint(double[] initialPoint);
+
+    /**
+     * @return epsilons vector.
+     */
+    double[] getEpsilons();
+
+    /**
+     * Setter for epsilons vector.
+     *
+     * @param epsilons epsilons vector.
+     */
+    void setEpsilons(double[] epsilons);
+
+    /**
+     * @return <code>true</code> if verbose flag is set to true.
+     */
+    boolean isVerbose();
 
     /**
      * Setts verbose flag.
@@ -55,8 +81,13 @@ public interface IOptAlgorithm {
     void setVerbose(boolean verbose);
 
     /**
+     * @return number of iterations.
+     */
+    int numberOfIterations();
+
+    /**
      * @return <code>true</code> if <b>this</b> optimization algorithm has been configured through
-     * {@link #configure(String)} method.
+     * {@link #configure(Properties)} method.
      */
     boolean isConfigured();
 

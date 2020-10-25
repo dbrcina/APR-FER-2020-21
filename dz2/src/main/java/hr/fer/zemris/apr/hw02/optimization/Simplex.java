@@ -25,12 +25,16 @@ public class Simplex extends AbstractOptAlgorithm {
     private double gamma;
     private double sigma;
 
+    /**
+     * @see AbstractOptAlgorithm#AbstractOptAlgorithm()
+     */
+    protected Simplex() {
+    }
+
     @Override
-    public void configure(String configFile) throws Exception {
+    public void configure(Properties properties) throws Exception {
         try {
-            super.configure(configFile);
-            // Config file is already loaded in super class.
-            Properties properties = PropertiesProvider.getProperties();
+            super.configure(properties);
             Object stepObj = properties.get("step");
             step = stepObj == null ? DEFAULT_STEP : Double.parseDouble((String) stepObj);
             Object alphaObj = properties.get("alpha");
@@ -41,8 +45,8 @@ public class Simplex extends AbstractOptAlgorithm {
             gamma = gammaObj == null ? DEFAULT_GAMMA : Double.parseDouble((String) gammaObj);
             Object sigmaObj = properties.get("sigma");
             sigma = sigmaObj == null ? DEFAULT_SIGMA : Double.parseDouble((String) sigmaObj);
-        } catch (NumberFormatException | ConfigFileException e) {
-            handleConfigureExceptions(configFile, e);
+        } catch (NumberFormatException | ConfigInvalidException e) {
+            handleConfigureExceptions(e);
         }
     }
 

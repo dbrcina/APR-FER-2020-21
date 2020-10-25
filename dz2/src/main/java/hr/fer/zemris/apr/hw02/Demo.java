@@ -4,9 +4,11 @@ import hr.fer.zemris.apr.hw02.function.*;
 import hr.fer.zemris.apr.hw02.optimization.IOptAlgorithm;
 import hr.fer.zemris.apr.hw02.optimization.IOptAlgorithmProvider;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Demo program that runs through all task problems.
@@ -15,23 +17,19 @@ import java.util.Map;
  */
 public class Demo {
 
+    private static final Properties PROPERTIES = new Properties();
     private static final String RESOURCES_FOLDER = "src/main/resources/";
-    private static final Map<String, String> PROPS_FILE_FOR_ALG_NAME = Map.of(
-            "GoldenRatio", "golden_ratio.properties",
-            "CoordinateSearch", "coordinate_search.properties",
-            "Simplex", "simplex.properties",
-            "HookeJeeves", "hooke_jeeves.properties"
-    );
+    private static final Set<String> ALGORITHMS = Set.of("GoldenRatio", "CoordinateSearch", "Simplex", "HookeJeeves");
 
     public static void main(String[] args) throws Exception {
         task1();
         System.out.println();
         System.out.println("-------------------------------------------");
         System.out.println();
-        task2();
-        System.out.println();
-        System.out.println("-------------------------------------------");
-        System.out.println();
+//        task2();
+//        System.out.println();
+//        System.out.println("-------------------------------------------");
+//        System.out.println();
     }
 
     private static void task1() throws Exception {
@@ -43,10 +41,11 @@ public class Demo {
                 return Math.pow(point[0] - 3, 2);
             }
         };
-        String baseFolder = RESOURCES_FOLDER + "task1/";
-        for (Map.Entry<String, String> entry : PROPS_FILE_FOR_ALG_NAME.entrySet()) {
-            IOptAlgorithm alg = IOptAlgorithmProvider.getInstance(entry.getKey());
-            alg.configure(baseFolder + entry.getValue());
+        String configFile = RESOURCES_FOLDER + "task1/configuration.properties";
+        PROPERTIES.load(Files.newInputStream(Paths.get(configFile)));
+        for (String algorithm : ALGORITHMS) {
+            IOptAlgorithm alg = IOptAlgorithmProvider.getInstance(algorithm);
+            alg.configure(PROPERTIES);
             printAlgResults(alg, f);
             System.out.println("------------------------");
         }
@@ -63,11 +62,12 @@ public class Demo {
 
     private static void task2(String funNum, IFunction function) throws Exception {
         System.out.println("Simulating function F" + funNum + ":");
-        String baseFolder = RESOURCES_FOLDER + "task2/f";
-        for (Map.Entry<String, String> entry : PROPS_FILE_FOR_ALG_NAME.entrySet()) {
-            if (entry.getKey().equals("GoldenRatio")) continue;
-            IOptAlgorithm alg = IOptAlgorithmProvider.getInstance(entry.getKey());
-            alg.configure(baseFolder + funNum + "/" + entry.getValue());
+        String configFile = RESOURCES_FOLDER + "task2/f" + funNum + "/configuration.properties";
+        PROPERTIES.load(Files.newInputStream(Paths.get(configFile)));
+        for (String algorithm : ALGORITHMS) {
+            if (algorithm.equals("GoldenRatio")) continue;
+            IOptAlgorithm alg = IOptAlgorithmProvider.getInstance(algorithm);
+            alg.configure(PROPERTIES);
             printAlgResults(alg, function);
             System.out.println("------------------------");
         }

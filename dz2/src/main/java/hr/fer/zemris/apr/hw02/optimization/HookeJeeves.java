@@ -19,28 +19,33 @@ public class HookeJeeves extends AbstractOptAlgorithm {
     /* Vector of deltas. Default values are set to DEFAULT_DELTA. */
     private double[] deltas;
 
+    /**
+     * @see AbstractOptAlgorithm#AbstractOptAlgorithm()
+     */
+    protected HookeJeeves() {
+    }
+
     @Override
-    public void configure(String configFile) throws Exception {
+    public void configure(Properties properties) throws Exception {
         try {
-            super.configure(configFile);
+            super.configure(properties);
             deltas = null;
-            // Config file is already loaded in super class.
-            Properties properties = PropertiesProvider.getProperties();
             Object deltasObj = properties.get("deltas");
             if (deltasObj != null) {
                 deltas = Arrays.stream(((String) deltasObj).split("\\s+"))
                         .mapToDouble(Double::parseDouble)
                         .toArray();
                 if (deltas.length != getInitialPoint().length) {
-                    throw new ConfigFileException("Dimension of initial point and deltas vectors need to be the same!");
+                    throw new ConfigInvalidException(
+                            "Dimension of initial point and deltas vectors need to be the same!");
                 }
             }
             if (deltas == null) {
                 deltas = new double[getInitialPoint().length];
                 Arrays.fill(deltas, DEFAULT_DELTA);
             }
-        } catch (NumberFormatException | ConfigFileException e) {
-            handleConfigureExceptions(configFile, e);
+        } catch (NumberFormatException | ConfigInvalidException e) {
+            handleConfigureExceptions(e);
         }
     }
 
