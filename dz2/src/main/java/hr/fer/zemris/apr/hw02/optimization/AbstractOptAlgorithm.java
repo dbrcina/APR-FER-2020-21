@@ -57,7 +57,9 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
 
     @Override
     public double[] run(IFunction function) {
-        System.out.println("Running " + getClass().getSimpleName() + " optimization algorithm:");
+        if (verbose) {
+            System.out.println("Running " + this + " optimization algorithm:");
+        }
         iterations = 0;
         return null;
     }
@@ -75,6 +77,11 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     @Override
     public boolean isConfigured() {
         return configured;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 
     /**

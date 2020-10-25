@@ -20,7 +20,7 @@ public class F2 extends AbstractFunction {
         testValuePointDimension(point, 2);
         double x1 = point[0];
         double x2 = point[1];
-        return Math.pow(x1 - a, 2) + b * Math.pow(x2 - c, 2);
+        return Math.pow(x1 + a, 2) + b * Math.pow(x2 + c, 2);
     }
 
 }
