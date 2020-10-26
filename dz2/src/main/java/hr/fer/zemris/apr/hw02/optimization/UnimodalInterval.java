@@ -1,9 +1,11 @@
 package hr.fer.zemris.apr.hw02.optimization;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
+import hr.fer.zemris.apr.hw01.math.Matrix;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 /**
- * Models an <code>unimodal</code> interval through {@link #create(IFunction, double)}.
+ * Models an <code>unimodal</code> interval through {@link #create(IFunction, double)} method.
  *
  * @author dbrcina
  */
@@ -12,7 +14,7 @@ public class UnimodalInterval {
     private static final int H = 1;
 
     /**
-     * Creates an unimodal interval based on provided <code>function</code> and <code>initialPoint</code> where
+     * Creates an unimodal interval based on the provided <code>function</code> and <code>initialPoint</code> where
      * <code>h</code> and <code>step</code> are set to <code>1</code>.
      *
      * @param function     evaluation function.
@@ -25,9 +27,11 @@ public class UnimodalInterval {
         double r = initialPoint + H;
         int step = 1;
 
-        double fm = function.value(new double[]{initialPoint});
-        double fl = function.value((new double[]{l}));
-        double fr = function.value((new double[]{r}));
+        // This matrix object will be used to compute operations.
+        IMatrix matrix = new Matrix(1, 1);
+        double fm = function.value(matrix.set(0, 0, initialPoint));
+        double fl = function.value(matrix.set(0, 0, l));
+        double fr = function.value(matrix.set(0, 0, r));
 
         if (fm < fr && fm < fl) {
             // DO NOTHING...
@@ -37,7 +41,7 @@ public class UnimodalInterval {
                 m = r;
                 fm = fr;
                 r = initialPoint + H * (step *= 2);
-                fr = function.value((new double[]{r}));
+                fr = function.value(matrix.set(0, 0, r));
             } while (fm > fr);
         } else {
             do {
@@ -45,7 +49,7 @@ public class UnimodalInterval {
                 m = l;
                 fm = fl;
                 l = initialPoint - H * (step *= 2);
-                fl = function.value((new double[]{l}));
+                fl = function.value(matrix.set(0, 0, l));
             } while (fm > fl);
         }
 

@@ -1,16 +1,18 @@
 package hr.fer.zemris.apr.hw02.function;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
+
 /**
  * @author dbrcina
  */
 public class F3 extends AbstractFunction {
 
     @Override
-    public double value(double[] point) {
-        testValuePointDimension(point, point.length);
+    public double value(IMatrix point) {
+        testValuePointDimension(point, point.getRowsCount());
         double sum = 0.0;
-        for (int i = 0; i < point.length; i++) {
-            sum += Math.pow(point[i] - (i + 1), 2);
+        for (int i = 0; i < point.getRowsCount(); i++) {
+            sum += Math.pow(point.get(i, 0) - (i + 1), 2);
         }
         return sum;
     }

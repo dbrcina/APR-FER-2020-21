@@ -1,5 +1,7 @@
 package hr.fer.zemris.apr.hw02.optimization;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
+import hr.fer.zemris.apr.hw01.math.Matrix;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 import java.util.Arrays;
@@ -51,13 +53,16 @@ public class Simplex extends AbstractOptAlgorithm {
     }
 
     @Override
-    public double[] run(IFunction function) {
+    public IMatrix run(IFunction function) {
         super.run(function);
-        double[][] simplexPoints = generateSimplexPoints();
+        IMatrix[] simplexPoints = generateSimplexPoints();
         double[] simplexValues;
         int l;
         int h;
-        double[] xC;
+        IMatrix xC;
+        // Used for stop condition.
+        IMatrix epsilons = getEpsilons();
+        double epsilonsNorm = l2Norm(epsilons);
         do {
             incrementIterations(1);
             simplexValues = Arrays.stream(simplexPoints)
@@ -67,10 +72,10 @@ public class Simplex extends AbstractOptAlgorithm {
             l = indexes[0];
             h = indexes[1];
             xC = calculateCentroid(simplexPoints, h);
-            double[] xR = reflection(xC, simplexPoints[h]);
+            IMatrix xR = reflection(xC, simplexPoints[h]);
             double FXR = function.value(xR);
             if (FXR < simplexValues[l]) {
-                double[] xE = expansion(xC, xR);
+                IMatrix xE = expansion(xC, xR);
                 double FXE = function.value(xE);
                 if (FXE < simplexValues[l]) {
                     simplexPoints[h] = xE;
@@ -93,7 +98,7 @@ public class Simplex extends AbstractOptAlgorithm {
                         simplexPoints[h] = xR;
                         simplexValues[h] = FXR;
                     }
-                    double[] xK = contraction(xC, simplexPoints[h]);
+                    IMatrix xK = contraction(xC, simplexPoints[h]);
                     double FXK = function.value(xK);
                     if (FXK < simplexValues[h]) {
                         simplexPoints[h] = xK;
@@ -106,7 +111,7 @@ public class Simplex extends AbstractOptAlgorithm {
                     simplexValues[h] = FXR;
                 }
             }
-        } while (terminate(simplexValues, function.value(xC)));
+        } while (terminate(simplexValues, function.value(xC), epsilonsNorm));
 
         return simplexPoints[l];
     }
@@ -116,14 +121,13 @@ public class Simplex extends AbstractOptAlgorithm {
      *
      * @return simplex points.
      */
-    private double[][] generateSimplexPoints() {
-        double[] x0 = getInitialPoint();
-        double[][] simplexPoints = new double[x0.length + 1][];
-        simplexPoints[0] = Arrays.copyOf(x0, x0.length);
-        for (int i = 0; i < x0.length; i++) {
-            double[] temp = Arrays.copyOf(x0, x0.length);
-            temp[i] += step;
-            simplexPoints[i + 1] = temp;
+    private IMatrix[] generateSimplexPoints() {
+        IMatrix x0 = getInitialPoint();
+        IMatrix[] simplexPoints = new IMatrix[x0.getRowsCount() + 1];
+        simplexPoints[0] = x0;
+        for (int i = 0; i < simplexPoints.length - 1; i++) {
+            IMatrix temp = x0.copy();
+            simplexPoints[i + 1] = temp.set(i, 0, temp.get(i, 0) + step);
         }
         return simplexPoints;
     }
@@ -158,18 +162,16 @@ public class Simplex extends AbstractOptAlgorithm {
      * @param h             index for highest function value.
      * @return centroid.
      */
-    private double[] calculateCentroid(double[][] simplexPoints, int h) {
+    private IMatrix calculateCentroid(IMatrix[] simplexPoints, int h) {
         int n = simplexPoints.length;
-        int pointDim = simplexPoints[0].length;
-        double[] centroid = new double[pointDim];
+        int pointDim = simplexPoints[0].getRowsCount();
+        IMatrix xC = new Matrix(pointDim, 1);
         for (int i = 0; i < n; i++) {
             if (i == h) continue;
-            double[] xi = simplexPoints[i];
-            for (int j = 0; j < centroid.length; j++) {
-                centroid[j] += xi[j];
-            }
+            IMatrix xi = simplexPoints[i];
+            xC.add(xi);
         }
-        return Arrays.stream(centroid).map(c -> c / (n - 1)).toArray();
+        return xC.scalarMul(1.0 / (n - 1));
     }
 
     /**
@@ -179,12 +181,8 @@ public class Simplex extends AbstractOptAlgorithm {
      * @param xH the worst solution.
      * @return reflection vector.
      */
-    private double[] reflection(double[] xC, double[] xH) {
-        double[] xR = new double[xC.length];
-        for (int i = 0; i < xR.length; i++) {
-            xR[i] += (1 + alpha) * xC[i] - alpha * xH[i];
-        }
-        return xR;
+    private IMatrix reflection(IMatrix xC, IMatrix xH) {
+        return xC.nScalarMul(1 + alpha).sub(xH.nScalarMul(alpha));
     }
 
     /**
@@ -194,12 +192,8 @@ public class Simplex extends AbstractOptAlgorithm {
      * @param xR reflected vector.
      * @return expanded vector.
      */
-    private double[] expansion(double[] xC, double[] xR) {
-        double[] xE = new double[xC.length];
-        for (int i = 0; i < xE.length; i++) {
-            xE[i] += (1 - gamma) * xC[i] - gamma * xR[i];
-        }
-        return xE;
+    private IMatrix expansion(IMatrix xC, IMatrix xR) {
+        return xC.nScalarMul(1 - gamma).sub(xR.nScalarMul(gamma));
     }
 
     /**
@@ -209,12 +203,8 @@ public class Simplex extends AbstractOptAlgorithm {
      * @param xH the worst solution.
      * @return contracted vector.
      */
-    private double[] contraction(double[] xC, double[] xH) {
-        double[] xK = new double[xC.length];
-        for (int i = 0; i < xK.length; i++) {
-            xK[i] += (1 - beta) * xC[i] + beta * xH[i];
-        }
-        return xK;
+    private IMatrix contraction(IMatrix xC, IMatrix xH) {
+        return xC.nScalarMul(1 - beta).add(xH.nScalarMul(beta));
     }
 
     /**
@@ -223,16 +213,14 @@ public class Simplex extends AbstractOptAlgorithm {
      * @param simplexPoints simplex points.
      * @param l             index of the best point.
      */
-    private void shrink(double[][] simplexPoints, int l) {
-        double[] xL = simplexPoints[l];
-        for (double[] points : simplexPoints) {
-            for (int i = 0; i < points.length; i++) {
-                points[i] = sigma * (points[i] + xL[i]);
-            }
+    private void shrink(IMatrix[] simplexPoints, int l) {
+        IMatrix xL = simplexPoints[l];
+        for (IMatrix point : simplexPoints) {
+            point.add(xL).scalarMul(sigma);
         }
     }
 
-    private boolean terminate(double[] simplexValues, double FXC) {
+    private boolean terminate(double[] simplexValues, double FXC, double epsilonsNorm) {
         int n = simplexValues.length;
         double[] vector = new double[n];
         for (int i = 0; i < n; i++) {
@@ -241,7 +229,7 @@ public class Simplex extends AbstractOptAlgorithm {
         double norm = Math.sqrt(Arrays.stream(vector)
                 .sum() / n
         );
-        return norm > getEpsilons()[0];
+        return norm > epsilonsNorm;
     }
 
 }

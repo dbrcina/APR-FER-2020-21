@@ -1,5 +1,6 @@
 package hr.fer.zemris.apr.hw02;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
 import hr.fer.zemris.apr.hw02.function.*;
 import hr.fer.zemris.apr.hw02.optimization.IOptAlgorithm;
 import hr.fer.zemris.apr.hw02.optimization.IOptAlgorithmProvider;
@@ -36,9 +37,9 @@ public class Demo {
         System.out.println("#### Starting task 1 ####");
         IFunction f = new AbstractFunction() {
             @Override
-            public double value(double[] point) {
+            public double value(IMatrix point) {
                 testValuePointDimension(point, 1);
-                return Math.pow(point[0] - 3, 2);
+                return Math.pow(point.get(0, 0) - 3, 2);
             }
         };
         String configFile = RESOURCES_FOLDER + "task1/configuration.properties";
@@ -54,8 +55,8 @@ public class Demo {
 
     private static void task2() throws Exception {
         System.out.println("#### Starting task 2 ####");
-        task2("1", new F1(1, 100));
-        task2("2", new F2(-4, 4, -2));
+        task2("1", new F1());
+        task2("2", new F2());
         task2("3", new F3());
         task2("4", new F4());
     }
@@ -80,11 +81,11 @@ public class Demo {
 
     private static void printAlgResults(IOptAlgorithm alg, IFunction function) {
         System.out.println("Algorithm: " + alg);
-        double[] solution = alg.run(function);
-        int evaluation = function.numOfCalls();
+        double[] solution = alg.run(function).columnData(0);
+        int evaluation = function.evaluatedTimes();
         System.out.println("Solution: " + Arrays.toString(solution));
         System.out.println("Function evaluated: " + evaluation);
-        function.resetNumOfCalls();
+        function.resetEvaluationCounter();
     }
 
 }

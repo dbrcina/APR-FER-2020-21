@@ -1,5 +1,6 @@
 package hr.fer.zemris.apr.hw02.optimization;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 import java.util.Properties;
@@ -9,8 +10,8 @@ import java.util.Properties;
  * Simulates an optimization algorithm. All optimization algorithms consist of these must
  * have properties (along with personal properties):
  * <ul>
- *     <li>initial point vector - <i>double[]</i>,</li>
- *     <li>epsilons vector - <i>double[]</i>,</li>
+ *     <li>initial point column vector - <i>{@link IMatrix}</i>,</li>
+ *     <li>epsilons column vector - <i>{@link IMatrix}</i>,</li>
  *     <li>verbose - <i>boolean</i>, if set to <code>true</code>, results of optimization algorithm are printed in
  *     each iteration,</li>
  *     <li>number of iterations - <i>integer</i>,</li>
@@ -42,46 +43,46 @@ public interface IOptAlgorithm {
      * @param function function that needs to be optimized.
      * @return the optimal point as a result.
      */
-    double[] run(IFunction function);
+    IMatrix run(IFunction function);
 
     /**
-     * @return initial point vector.
+     * @return a copy of the initial point vector.
      */
-    double[] getInitialPoint();
+    IMatrix getInitialPoint();
 
     /**
-     * Setter for initial point vector.
+     * Setter for the initial point vector. The provided vector is copied rather than saved by the reference.
      *
-     * @param initialPoint initial point vector.
+     * @param initialPoint the initial point vector.
      */
-    void setInitialPoint(double[] initialPoint);
+    void setInitialPoint(IMatrix initialPoint);
 
     /**
-     * @return epsilons vector.
+     * @return a copy of the epsilons vector.
      */
-    double[] getEpsilons();
+    IMatrix getEpsilons();
 
     /**
-     * Setter for epsilons vector.
+     * Setter for the epsilons vector. The provided vector is copied rather than saved by the reference.
      *
-     * @param epsilons epsilons vector.
+     * @param epsilons the epsilons vector.
      */
-    void setEpsilons(double[] epsilons);
+    void setEpsilons(IMatrix epsilons);
 
     /**
-     * @return <code>true</code> if verbose flag is set to true.
+     * @return <code>true</code> if the verbose flag is set to <code>true</code>.
      */
     boolean isVerbose();
 
     /**
-     * Setts verbose flag.
+     * Setter for the verbose flag.
      *
-     * @param verbose verbose flag.
+     * @param verbose the verbose flag.
      */
     void setVerbose(boolean verbose);
 
     /**
-     * @return number of iterations.
+     * @return the number of iterations.
      */
     int numberOfIterations();
 

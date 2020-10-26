@@ -1,13 +1,14 @@
 package hr.fer.zemris.apr.hw02.optimization;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
+import hr.fer.zemris.apr.hw01.math.Matrix;
 import hr.fer.zemris.apr.hw02.function.AbstractFunction;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
-import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * An implementation of <i>Coordinate search</i> optimization algorithm.
+ * An implementation of the <i>Coordinate search</i> optimization algorithm.
  *
  * @author dbrcina
  * @see IOptAlgorithm
@@ -30,46 +31,61 @@ public class CoordinateSearch extends AbstractOptAlgorithm {
     }
 
     @Override
-    public double[] run(IFunction function) {
+    public IMatrix run(IFunction function) {
         super.run(function);
-        double[] x0 = getInitialPoint();
-        double[] x = Arrays.copyOf(x0, x0.length);
-        double[] subXXS = new double[x.length];
-        GoldenRatio gr = null;
+
+        IMatrix initialPoint = getInitialPoint();
+        IMatrix epsilons = getEpsilons();
+
+        /* Retrieve GoldenRatio optimization algorithm. */
+        IOptAlgorithm gr = null;
         try {
-            gr = (GoldenRatio) IOptAlgorithmProvider.getInstance("GoldenRatio");
-            if (!gr.isConfigured()) {
-                gr.setInitialPoint(getInitialPoint());
-                gr.setEpsilons(getEpsilons());
-            }
+            gr = IOptAlgorithmProvider.getInstance("GoldenRatio");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Exiting...");
             System.exit(-1);
         }
 
+        // Current iteration point.
+        IMatrix x = initialPoint;
+        // Point from previous iteration.
+        IMatrix xS;
+        // x - xS
+        IMatrix subXXS;
+
+        // Used for stop condition.
+        double epsilonsNorm = l2Norm(epsilons);
+
         do {
             incrementIterations(1);
-            double[] xS = Arrays.copyOf(x, x.length);
-            for (int i = 0; i < x.length; i++) {
-                int ithId = i;
-                IFunction f = new AbstractFunction() {
-                    @Override // Here point is an array with the length of 1, which represent lambda
-                    public double value(double[] point) {
+            xS = x.copy();
+            for (int i = 0; i < x.getRowsCount(); i++) {
+                final int ithId = i; // Index of the identity vector. Direction of a coordinate axis.
+                IFunction surrogateFun = new AbstractFunction() {
+                    @Override // Here point is a 1x1 matrix, which represents lambda.
+                    public double value(IMatrix point) {
                         testValuePointDimension(point, 1);
-                        double[] xTemp = Arrays.copyOf(x, x.length);
-                        xTemp[ithId] += point[0] * 1; // vec_x + lambda * vec_ith_id
+                        IMatrix xTemp = x.copy();
+                        // x_vec = x_vec + lambda*ei, where ei is identity vector with index i.
+                        // Only value at index i of x_vec is updated because algorithm moves in direction i!
+                        xTemp.set(ithId, 0, xTemp.get(ithId, 0) + point.get(0, 0));
                         return function.value(xTemp);
                     }
                 };
-                double lambdaMin = gr.run(f)[0];
-                x[ithId] += lambdaMin * 1;
-                incrementIterations(gr.numberOfIterations());
+                // Matrix object used to pass initial point and epsilon for ith point component.
+                IMatrix matrixConfig = new Matrix(1, 1);
+                gr.setInitialPoint(matrixConfig.set(0, 0, initialPoint.get(i, 0)));
+                gr.setEpsilons(matrixConfig.set(0, 0, epsilons.get(i, 0)));
+                // Retrieve lambda minimizer, which is a 1x1 matrix.
+                IMatrix lambdaMin = gr.run(surrogateFun);
+                // x_vec = x_vec + lambda*ei, where ei is identity vector with index i.
+                x.set(i, 0, x.get(i, 0) + lambdaMin.get(0, 0));
+                // Reset the calculated unimodal interval for golden ratio
+                ((GoldenRatio) gr).setInterval(null);
             }
-            for (int i = 0; i < x.length; i++) {
-                subXXS[i] = x[i] - xS[i];
-            }
-        } while (!vectorLEQEpsilons(subXXS));
+            subXXS = x.nSub(xS);
+        } while (l2Norm(subXXS) > epsilonsNorm);
 
         return x;
     }

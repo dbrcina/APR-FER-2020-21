@@ -1,5 +1,7 @@
 package hr.fer.zemris.apr.hw02.optimization;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
+import hr.fer.zemris.apr.hw01.math.Matrix;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 import java.util.Arrays;
@@ -17,7 +19,7 @@ public class HookeJeeves extends AbstractOptAlgorithm {
     private static final double DEFAULT_DELTA = 0.5;
 
     /* Vector of deltas. Default values are set to DEFAULT_DELTA. */
-    private double[] deltas;
+    private IMatrix deltas;
 
     /**
      * @see AbstractOptAlgorithm#AbstractOptAlgorithm()
@@ -29,74 +31,80 @@ public class HookeJeeves extends AbstractOptAlgorithm {
     public void configure(Properties properties) throws Exception {
         try {
             super.configure(properties);
+            /* Configure the deltas vector. Find 'deltas' in the properties map. */
             deltas = null;
             Object deltasObj = properties.get("deltas");
+            double[] deltasColumnData;
             if (deltasObj != null) {
-                deltas = Arrays.stream(((String) deltasObj).split("\\s+"))
+                deltasColumnData = Arrays.stream(((String) deltasObj).split("\\s+"))
                         .mapToDouble(Double::parseDouble)
                         .toArray();
-                if (deltas.length != getInitialPoint().length) {
+                if (deltasColumnData.length != getInitialPoint().getRowsCount()) {
                     throw new ConfigInvalidException(
                             "Dimension of initial point and deltas vectors need to be the same!");
                 }
+            } else {
+                deltasColumnData = new double[getInitialPoint().getRowsCount()];
+                Arrays.fill(deltasColumnData, DEFAULT_DELTA);
             }
-            if (deltas == null) {
-                deltas = new double[getInitialPoint().length];
-                Arrays.fill(deltas, DEFAULT_DELTA);
-            }
+            deltas = new Matrix(deltasColumnData.length, 1);
+            deltas.setColumn(0, deltasColumnData);
         } catch (NumberFormatException | ConfigInvalidException e) {
             handleConfigureExceptions(e);
         }
     }
 
     @Override
-    public double[] run(IFunction function) {
+    public IMatrix run(IFunction function) {
         super.run(function);
-        double[] x0 = getInitialPoint();
-        double[] xB = Arrays.copyOf(x0, x0.length);
-        double[] xP = Arrays.copyOf(x0, x0.length);
-        while (!vectorLEQEpsilons(deltas)) {
+        IMatrix x0 = getInitialPoint();
+        IMatrix xB = x0.copy();
+        IMatrix xP = x0.copy();
+
+        // Used for stop condition.
+        IMatrix epsilons = getEpsilons();
+        double epsilonsNorm = l2Norm(epsilons);
+
+        while (l2Norm(deltas) > epsilonsNorm) {
             incrementIterations(1);
-            double[] xN = search(function, xP);
-            double N = function.value(xN);
-            double B = function.value(xB);
+            IMatrix xN = search(function, xP);
+            double FN = function.value(xN);
+            double FB = function.value(xB);
             if (isVerbose()) {
-                printResults(numberOfIterations(), xB, xP, xN, B, function.value(xP), N);
+                printResults(numberOfIterations(),
+                        xB.columnData(0), xP.columnData(0), xN.columnData(0),
+                        FB, function.value(xP), FN);
             }
-            if (N < B) {                                // Base point is accepted.
-                for (int i = 0; i < xP.length; i++) {   // Define new search point.
-                    xP[i] = 2 * xN[i] - xB[i];          // 2 * xN - xB (lin reflection).
-                }
+            if (FN < FB) {                     // Base point is accepted.
+                xP = xN.nScalarMul(2).sub(xB); // Define new search point. xP = 2 * xN - xB (lin reflection).
                 xB = xN;
             } else {
-                for (int i = 0; i < deltas.length; i++) {
-                    deltas[i] *= 0.5;                   // Decrease deltas vector by half.
-                }
-                xP = xB;                                // Return on the last base point.
+                deltas.scalarMul(0.5); // Decrease deltas vector by half.
+                xP = xB;               // Return on the last base point.
             }
         }
         return xB;
     }
 
     /**
-     * Searches for a point that minimizes the provided <code>function</code> the most around the provided
-     * point <code>xP</code> in <code>+/-</code> deltas directions.
+     * Searches for the minimizer of the provided <code>function</code> in <code>+/-</code> deltas directions around the
+     * point <code>xP</code>.
      *
      * @param function evaluation function.
      * @param xP       xP point.
      * @return point.
      */
-    private double[] search(IFunction function, double[] xP) {
-        double[] x = Arrays.copyOf(xP, xP.length);
-        for (int i = 0; i < x.length; i++) {
-            double P = function.value(x);
-            x[i] += deltas[i];              // Increase by DX.
-            double N = function.value(x);
-            if (N > P) {                    // Increase didn't work.
-                x[i] -= 2 * deltas[i];      // Decrease by DX instead.
-                N = function.value(x);
-                if (N > P) {                // Decrease also didn't work.
-                    x[i] += deltas[i];      // Return the initial state.
+    private IMatrix search(IFunction function, IMatrix xP) {
+        IMatrix x = xP.copy();
+        for (int i = 0; i < x.getRowsCount(); i++) {
+            double FP = function.value(x);
+            x.set(i, 0, x.get(i, 0) + deltas.get(i, 0));         // Increase by DX.
+            double FN = function.value(x);
+            if (FN > FP) {                                                               // Increase didn't work.
+                x.set(i, 0, x.get(i, 0) - 2 * deltas.get(i, 0)); // Decrease by DX instead.
+                FN = function.value(x);
+                if (FN > FP) {                                                           // Decrease also didn't work.
+                    x.set(i, 0, x.get(i, 0) + deltas.get(i, 0)); // Return the initial state.
                 }
             }
         }

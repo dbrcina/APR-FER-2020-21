@@ -1,5 +1,7 @@
 package hr.fer.zemris.apr.hw02.optimization;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
+import hr.fer.zemris.apr.hw01.math.Matrix;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 import java.util.Arrays;
@@ -8,7 +10,7 @@ import java.util.Properties;
 import java.util.function.BiFunction;
 
 /**
- * An implementation of <i>Golden ratio</i> optimization algorithm.
+ * An implementation of the <i>Golden ratio</i> optimization algorithm.
  *
  * @author dbrcina
  * @see IOptAlgorithm
@@ -22,7 +24,7 @@ public class GoldenRatio extends AbstractOptAlgorithm {
     /* BiFunction used for calculating d value in golden ration algorithm. */
     private static final BiFunction<Double, Double, Double> D = (a, b) -> a + K * (b - a);
 
-    /* Unimodal interval used in golden ratio algorithm. */
+    /* Unimodal interval used in the golden ratio algorithm. */
     private double[] interval;
 
     /**
@@ -49,25 +51,27 @@ public class GoldenRatio extends AbstractOptAlgorithm {
     }
 
     @Override
-    public double[] run(IFunction function) {
+    public IMatrix run(IFunction function) {
         super.run(function);
         if (interval == null) {
-            // Initial point is an array with the length of 1.
-            interval = UnimodalInterval.create(function, getInitialPoint()[0]);
+            // Initial point is a matrix with 1x1 dimensions.
+            interval = UnimodalInterval.create(function, getInitialPoint().get(0, 0));
         }
+        // This matrix object will be used to compute operations.
+        IMatrix matrix = new Matrix(1, 1);
         double a = interval[0];
         double b = interval[1];
         double c = C.apply(a, b);
         double d = D.apply(a, b);
-        double fc = function.value(new double[]{c});
-        double fd = function.value(new double[]{d});
-        // Epsilons is an array with the length of 1.
-        double epsilon = getEpsilons()[0];
+        double fc = function.value(matrix.set(0, 0, c));
+        double fd = function.value(matrix.set(0, 0, d));
+        // Epsilons is a matrix with 1x1 dimensions.
+        double epsilon = getEpsilons().get(0, 0);
         while ((b - a) > epsilon) {
             incrementIterations(1);
             if (isVerbose()) {
-                double fa = function.value(new double[]{a});
-                double fb = function.value(new double[]{b});
+                double fa = function.value(matrix.set(0, 0, a));
+                double fb = function.value(matrix.set(0, 0, b));
                 printResults(numberOfIterations(), a, b, c, d, fa, fb, fc, fd);
             }
             if (fc < fd) {
@@ -75,16 +79,16 @@ public class GoldenRatio extends AbstractOptAlgorithm {
                 d = c;
                 c = C.apply(a, b);
                 fd = fc;
-                fc = function.value(new double[]{c});
+                fc = function.value(matrix.set(0, 0, c));
             } else {
                 a = c;
                 c = d;
                 d = D.apply(a, b);
                 fc = fd;
-                fd = function.value(new double[]{d});
+                fd = function.value(matrix.set(0, 0, d));
             }
         }
-        return new double[]{(a + b) / 2};
+        return matrix.set(0, 0, (a + b) / 2);
     }
 
     /**
@@ -98,6 +102,32 @@ public class GoldenRatio extends AbstractOptAlgorithm {
         System.out.printf(Locale.US, "d = %f, f(d) = %f%n", d, fd);
         System.out.printf(Locale.US, "b = %f, f(b) = %f%n", b, fb);
         System.out.println("------------------------------");
+    }
+
+    /**
+     * @return a copy of the interval or <code>null</code> if the interval is not yet calculated.
+     */
+    public double[] getInterval() {
+        if (interval == null) return null;
+        return Arrays.copyOf(interval, interval.length);
+    }
+
+    /**
+     * Setter for the interval. The provided interval is copied rather than saved by the reference.
+     *
+     * @param interval interval.
+     * @throws IllegalArgumentException if the provided interval is not <code>null</code> and is an array with the
+     *                                  length of 2.
+     */
+    public void setInterval(double[] interval) {
+        if (interval == null) {
+            this.interval = null;
+            return;
+        }
+        if (interval.length != 2) {
+            throw new IllegalArgumentException("GoldenRatio::setInterval(double[]): Interval length is not 2!");
+        }
+        this.interval = Arrays.copyOf(interval, interval.length);
     }
 
 }

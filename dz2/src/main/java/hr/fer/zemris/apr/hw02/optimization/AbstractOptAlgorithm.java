@@ -1,12 +1,14 @@
 package hr.fer.zemris.apr.hw02.optimization;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
+import hr.fer.zemris.apr.hw01.math.Matrix;
 import hr.fer.zemris.apr.hw02.function.IFunction;
 
 import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * An abstract implementation of {@link IOptAlgorithm} interface.
+ * An abstract implementation of the {@link IOptAlgorithm} interface.
  *
  * @author dbrcina
  */
@@ -14,8 +16,8 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
 
     private final static double DEFAULT_EPSILON = 1e-6;
 
-    private double[] initialPoint;
-    private double[] epsilons;
+    private IMatrix initialPoint;
+    private IMatrix epsilons;
     private boolean verbose;
     private int iterations;
     private boolean configured;
@@ -34,33 +36,43 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
         if (properties.size() == 0) {
             throw new ConfigInvalidException("Properties object contains no configuration!");
         }
+        /* Configure the initial point vector. Find 'initial.point' in the properties map. */
         initialPoint = null;
         Object initialPointObj = properties.get("initial.point");
         if (initialPointObj != null) {
-            initialPoint = Arrays.stream(((String) initialPointObj).split("\\s+"))
+            double[] columnData = Arrays.stream(((String) initialPointObj).split("\\s+"))
                     .mapToDouble(Double::parseDouble)
                     .toArray();
+            initialPoint = new Matrix(columnData.length, 1);
+            initialPoint.setColumn(0, columnData);
         }
         if (initialPoint == null) {
             throw new ConfigInvalidException("Initial point must be provided!");
         }
+        /* Configure the epsilons vector. Find 'epsilons' in the properties map. */
+        epsilons = null;
         Object epsilonObj = properties.get("epsilons");
+        double[] epsilonsColumnData;
         if (epsilonObj != null) {
-            epsilons = Arrays.stream(((String) epsilonObj).split("\\s+"))
+            epsilonsColumnData = Arrays.stream(((String) epsilonObj).split("\\s+"))
                     .mapToDouble(Double::parseDouble)
                     .toArray();
-            if (epsilons.length != initialPoint.length) {
-                throw new ConfigInvalidException("Dimension of initial point and epsilons vectors need to be the same!");
+            if (epsilonsColumnData.length != initialPoint.getRowsCount()) {
+                throw new ConfigInvalidException(
+                        "Dimension of the initial point and the epsilons vectors need to be the same!"
+                );
             }
         } else {
-            epsilons = new double[initialPoint.length];
-            Arrays.fill(epsilons, DEFAULT_EPSILON);
+            epsilonsColumnData = new double[initialPoint.getRowsCount()];
+            Arrays.fill(epsilonsColumnData, DEFAULT_EPSILON);
         }
+        epsilons = new Matrix(epsilonsColumnData.length, 1);
+        epsilons.setColumn(0, epsilonsColumnData);
         configured = true;
     }
 
     @Override
-    public double[] run(IFunction function) {
+    public IMatrix run(IFunction function) {
         if (verbose) {
             System.out.println("Running " + this + " optimization algorithm:");
         }
@@ -69,23 +81,23 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     }
 
     @Override
-    public double[] getInitialPoint() {
-        return Arrays.copyOf(initialPoint, initialPoint.length);
+    public IMatrix getInitialPoint() {
+        return initialPoint.copy();
     }
 
     @Override
-    public void setInitialPoint(double[] initialPoint) {
-        this.initialPoint = Arrays.copyOf(initialPoint, initialPoint.length);
+    public void setInitialPoint(IMatrix initialPoint) {
+        this.initialPoint = initialPoint.copy();
     }
 
     @Override
-    public double[] getEpsilons() {
-        return Arrays.copyOf(epsilons, epsilons.length);
+    public IMatrix getEpsilons() {
+        return epsilons.copy();
     }
 
     @Override
-    public void setEpsilons(double[] epsilons) {
-        this.epsilons = Arrays.copyOf(epsilons, epsilons.length);
+    public void setEpsilons(IMatrix epsilons) {
+        this.epsilons = epsilons.copy();
     }
 
     @Override
@@ -125,25 +137,13 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     }
 
     /**
-     * L2-norm is used to calculate values.
+     * Calculates <code>L2-norm</code> of the provided column <code>vector</code>.
      *
-     * @param vector vector.
-     * @return <code>true</code> if the vector is lower than or equal to epsilons vector.
-     */
-    protected boolean vectorLEQEpsilons(double[] vector) {
-        double vectorNorm = Math.sqrt(Arrays.stream(vector).map(v -> v * v).sum());
-        double epsilonsNorm = Math.sqrt(Arrays.stream(epsilons).map(e -> e * e).sum());
-        return vectorNorm <= epsilonsNorm;
-    }
-
-    /**
-     * Calculates <code>L2-norm</code> of the provided <code>vector</code>.
-     *
-     * @param vector vector.
+     * @param vector column vector.
      * @return L2 norm.
      */
-    protected double l2Norm(double[] vector) {
-        return Math.sqrt(Arrays.stream(vector).map(v -> v * v).sum());
+    protected double l2Norm(IMatrix vector) {
+        return Math.sqrt(Arrays.stream(vector.columnData(0)).map(v -> v * v).sum());
     }
 
     /**

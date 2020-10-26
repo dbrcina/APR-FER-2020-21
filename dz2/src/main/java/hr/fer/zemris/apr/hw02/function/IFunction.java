@@ -1,5 +1,7 @@
 package hr.fer.zemris.apr.hw02.function;
 
+import hr.fer.zemris.apr.hw01.math.IMatrix;
+
 /**
  * Simulates a function with one or more variables.
  *
@@ -8,22 +10,25 @@ package hr.fer.zemris.apr.hw02.function;
 public interface IFunction {
 
     /**
-     * Calculates value at provided <code>point</code>.
+     * Calculates function value at the provided <code>point</code>, where the <code>point</code> is a column vector.
      *
-     * @param point point.
-     * @return calculated value.
+     * @param point a point.
+     * @return a calculated value.
      * @throws IllegalArgumentException if the point's dimension is invalid.
      */
-    double value(double[] point);
+    double value(IMatrix point);
 
     /**
-     * @return the number of calls for <b>this</b> IFunction object.
+     * @return how many times has <b>this</b> function been evaluated.
+     * @see #resetEvaluationCounter()
      */
-    int numOfCalls();
+    int evaluatedTimes();
 
     /**
-     * Resets the number of calls counter for <b>this</b> IFunction object.
+     * Resets the evaluation counter for <b>this</b> function.
+     *
+     * @see #evaluatedTimes()
      */
-    void resetNumOfCalls();
+    void resetEvaluationCounter();
 
 }
