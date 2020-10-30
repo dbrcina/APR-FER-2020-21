@@ -21,11 +21,11 @@ public class Simplex extends AbstractOptAlgorithm {
     private static final double DEFAULT_GAMMA = 2;
     private static final double DEFAULT_SIGMA = 0.5;
 
-    private double step;
-    private double alpha;
-    private double beta;
-    private double gamma;
-    private double sigma;
+    private double step = DEFAULT_STEP;
+    private double alpha = DEFAULT_ALPHA;
+    private double beta = DEFAULT_BETA;
+    private double gamma = DEFAULT_GAMMA;
+    private double sigma = DEFAULT_SIGMA;
 
     /**
      * @see AbstractOptAlgorithm#AbstractOptAlgorithm()
@@ -193,7 +193,7 @@ public class Simplex extends AbstractOptAlgorithm {
      * @return expanded vector.
      */
     private IMatrix expansion(IMatrix xC, IMatrix xR) {
-        return xC.nScalarMul(1 - gamma).sub(xR.nScalarMul(gamma));
+        return xC.nScalarMul(1 - gamma).add(xR.nScalarMul(gamma));
     }
 
     /**
@@ -230,6 +230,14 @@ public class Simplex extends AbstractOptAlgorithm {
                 .sum() / n
         );
         return norm > epsilonsNorm;
+    }
+
+    public double getStep() {
+        return step;
+    }
+
+    public void setStep(double step) {
+        this.step = step;
     }
 
 }

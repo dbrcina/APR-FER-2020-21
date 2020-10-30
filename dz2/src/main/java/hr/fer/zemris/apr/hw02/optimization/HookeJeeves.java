@@ -122,4 +122,8 @@ public class HookeJeeves extends AbstractOptAlgorithm {
         System.out.println("------------------------------");
     }
 
+    public void setDeltas(IMatrix deltas) {
+        this.deltas = deltas.copy();
+    }
+
 }
