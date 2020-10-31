@@ -69,7 +69,6 @@ public class Demo {
         }
     }
 
-
     private static void task2() throws Exception {
         System.out.println("#### Starting task 2 ####");
         task2("1", FUNCTIONS[0]);
@@ -111,31 +110,37 @@ public class Demo {
 
     private static void task4() throws Exception {
         System.out.println("#### Starting task 4 ####");
-        for (int i = 1; i <= 5; i++) {
-            String configFile = RESOURCES_FOLDER + "task4/configuration" + i + ".properties";
-            PROPERTIES.load(Files.newInputStream(Paths.get(configFile)));
-            Simplex alg = (Simplex) IOptAlgorithmProvider.getInstance("Simplex");
-            alg.configure(PROPERTIES);
-            System.out.println("Initial point: " + Arrays.toString(alg.getInitialPoint().columnData(0)));
-            System.out.println("Step: " + alg.getStep());
-            printAlgResults(alg, FUNCTIONS[0]);
-            if (i != 5) {
-                System.out.println();
-                System.out.println("####################################");
-                System.out.println();
-            }
+        task4("1");
+        System.out.println();
+        task4("2");
+    }
+
+    private static void task4(String configNum) throws Exception {
+        String configFile = RESOURCES_FOLDER + "task4/configuration" + configNum + ".properties";
+        PROPERTIES.load(Files.newInputStream(Paths.get(configFile)));
+        Simplex alg = (Simplex) IOptAlgorithmProvider.getInstance("Simplex");
+        alg.configure(PROPERTIES);
+        double[] initialPoint = alg.getInitialPoint().columnData(0);
+        System.out.println("Initial point: " + Arrays.toString(initialPoint));
+        System.out.println("Step  Evaluations    Solution");
+        for (int i = 1; i <= 20; i++) {
+            alg.setStep(i);
+            double[] solution = alg.run(FUNCTIONS[0]).columnData(0);
+            int evaluation = FUNCTIONS[0].evaluatedTimes();
+            FUNCTIONS[0].resetEvaluationCounter();
+            System.out.printf("%2d%s%4d%s%s%n", i, " ".repeat(5), evaluation, " ".repeat(5), Arrays.toString(solution));
         }
     }
 
     private static void task5() throws Exception {
         System.out.println("#### Starting task 5 ####");
-        IOptAlgorithm alg = IOptAlgorithmProvider.getInstance("CoordinateSearch");
+        IOptAlgorithm alg = IOptAlgorithmProvider.getInstance("Simplex");
         double[] epsilons = {1e-6, 1e-6};
         IMatrix matrix = new Matrix(2, 1);
         alg.setEpsilons(matrix.set(0, 0, epsilons[0]).set(1, 0, epsilons[1]));
         if (alg instanceof HookeJeeves) {
             double[] deltas = {0.5, 0.5};
-            ((HookeJeeves) alg).setDeltas(matrix.set(0, 0, deltas[0]).set(1, 0, deltas[1]));
+            ((HookeJeeves) alg).setDeltas(matrix.set(0, 0, deltas[0]).set(1, 0, deltas[1]).copy());
         }
         int counter = 0;
         for (int i = 0; i < 100_000; i++) {
@@ -143,7 +148,7 @@ public class Demo {
             alg.setInitialPoint(matrix.set(0, 0, initialPoint[0]).set(1, 0, initialPoint[1]));
             IMatrix solution = alg.run(FUNCTIONS[4]);
             double value = FUNCTIONS[4].value(solution);
-            if (value < 1e-4) {
+            if (value <= 1e-4) {
                 counter++;
 //                System.out.println("Iteracija " + (i + 1));
 //                System.out.println("Solution: " + Arrays.toString(solution.columnData(0)));
@@ -151,7 +156,7 @@ public class Demo {
             }
             FUNCTIONS[4].resetEvaluationCounter();
         }
-        System.out.println(counter / 100_000.0 * 100);
+        System.out.println("p = " + counter / 100_000.0 * 100);
     }
 
     private static void printAlgResults(IOptAlgorithm alg, IFunction function) {

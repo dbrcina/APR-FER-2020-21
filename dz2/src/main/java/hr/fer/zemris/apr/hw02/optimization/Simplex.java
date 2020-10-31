@@ -56,7 +56,9 @@ public class Simplex extends AbstractOptAlgorithm {
     public IMatrix run(IFunction function) {
         super.run(function);
         IMatrix[] simplexPoints = generateSimplexPoints();
-        double[] simplexValues;
+        double[] simplexValues = Arrays.stream(simplexPoints)
+                .mapToDouble(function::value)
+                .toArray();
         int l;
         int h;
         IMatrix xC;
@@ -65,9 +67,6 @@ public class Simplex extends AbstractOptAlgorithm {
         double epsilonsNorm = l2Norm(epsilons);
         do {
             incrementIterations(1);
-            simplexValues = Arrays.stream(simplexPoints)
-                    .mapToDouble(function::value)
-                    .toArray();
             int[] indexes = findLAndHIndexes(simplexValues);
             l = indexes[0];
             h = indexes[1];
@@ -105,6 +104,9 @@ public class Simplex extends AbstractOptAlgorithm {
                         simplexValues[h] = FXK;
                     } else {
                         shrink(simplexPoints, l);
+                        simplexValues = Arrays.stream(simplexPoints)
+                                .mapToDouble(function::value)
+                                .toArray();
                     }
                 } else {
                     simplexPoints[h] = xR;
