@@ -149,11 +149,12 @@ public class Demo {
             alg.setInitialPoint(matrix.set(0, 0, initialPoint[0]).set(1, 0, initialPoint[1]));
             IMatrix solution = alg.run(FUNCTIONS[4]);
             double value = FUNCTIONS[4].value(solution);
-            if (value <= 1e-4) {
+            if (value < 1e-4) {
                 counter++;
-//                System.out.println("Iteracija " + (i + 1));
-//                System.out.println("Solution: " + Arrays.toString(solution.columnData(0)));
-//                System.out.println("Function evaluated: " + FUNCTIONS[4].evaluatedTimes());
+                System.out.println("Initial point: " + Arrays.toString(initialPoint));
+                System.out.println("Solution: " + Arrays.toString(solution.columnData(0)));
+                System.out.println("Function evaluated: " + FUNCTIONS[4].evaluatedTimes());
+                System.out.println("------------------------");
             }
             FUNCTIONS[4].resetEvaluationCounter();
         }
