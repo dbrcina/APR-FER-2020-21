@@ -106,6 +106,7 @@ public class Demo {
         alg = IOptAlgorithmProvider.getInstance("Simplex");
         alg.configure(PROPERTIES);
         printAlgResults(alg, FUNCTIONS[3]);
+		  System.out.println("------------------------");
     }
 
     private static void task4() throws Exception {
