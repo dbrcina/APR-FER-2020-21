@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class Box extends AbstractOptAlgorithm {
 
-    private static final double DEFAULT_ALPHA = 1;
+    private static final double DEFAULT_ALPHA = 1.3;
     private static final Random RANDOM = new Random();
 
     private double alpha = DEFAULT_ALPHA;
@@ -44,7 +44,7 @@ public class Box extends AbstractOptAlgorithm {
     public IMatrix run(IFunction function) {
         super.run(function);
         ArgsConstraints constraints = getConstraints();
-        IMatrix x0 = constraints.testExplicitConstraints(getInitialPoint());
+        IMatrix x0 = constraints.applyExplicitConstraints(getInitialPoint());
         if (!constraints.testImplicitConstraints(x0)) {
             System.out.println("Initial point doesn't satisfy implicit constraints! Exiting...");
             return x0;
@@ -52,30 +52,103 @@ public class Box extends AbstractOptAlgorithm {
         IMatrix[] points = generatePoints(x0, constraints);
         double[] pointsValues = Arrays.stream(points).mapToDouble(function::value).toArray();
         int l, h, h2;
+        double bestValue = Double.MAX_VALUE;
         IMatrix xC;
         double epsilon = getEpsilons().get(0, 0);
         do {
-
-        } while ()
+            int[] indexes = findIndexes(pointsValues);
+            l = indexes[0];
+            h = indexes[1];
+            h2 = indexes[2];
+            if (isDiverging(pointsValues[l], bestValue)) break;
+            bestValue = pointsValues[l];
+            xC = calculateCentroid(points, l, h);
+            IMatrix xR = reflection(xC, points[h]);
+            constraints.applyExplicitConstraints(xR);
+            applyImplicitConstraints(xC, xR, constraints);
+            double fXr = function.value(xR);
+            double fXh2 = pointsValues[h2];
+            if (fXr > fXh2) {
+                xR = moveTowardsXc(xC, xR);
+                fXr = function.value(xR);
+            }
+            points[h] = xR;
+            pointsValues[h] = fXr;
+        } while (!exitCondition(pointsValues, function.value(xC), epsilon));
         return points[l];
     }
 
+    /* Generates 2n points array. */
     private IMatrix[] generatePoints(IMatrix xC, ArgsConstraints constraints) {
         IMatrix[] points = new IMatrix[2 * xC.getRowsCount()];
         points[0] = xC.copy();
-        for (int i = 1; i < points.length * 2; i++) {
+        int nPointsAdded = 1;
+        for (int i = 1; i < points.length; i++) {
             IMatrix point = constraints.generatePointUsingExplicitConstraints(RANDOM);
-            while (!constraints.testImplicitConstraints(point)) {
-                point.add(xC).scalarMul(0.5);
-            }
-            points[i] = point;
+            points[i] = applyImplicitConstraints(xC, point, constraints);
+            nPointsAdded++;
             xC = points[0].copy();
-            for (int j = 1; j < points.length; j++) {
+            for (int j = 1; j < nPointsAdded; j++) {
                 xC.add(points[j]);
             }
             xC.scalarMul(1.0 / points.length);
         }
         return points;
+    }
+
+    private IMatrix applyImplicitConstraints(IMatrix xC, IMatrix point, ArgsConstraints constraints) {
+        while (!constraints.testImplicitConstraints(point)) {
+            point = moveTowardsXc(xC, point);
+        }
+        return point;
+    }
+
+    private IMatrix moveTowardsXc(IMatrix xC, IMatrix point) {
+        return point.add(xC).scalarMul(0.5);
+    }
+
+    /* Returns l, h and h2 indexes. */
+    private int[] findIndexes(double[] pointsValues) {
+        double lValue = Double.MAX_VALUE;
+        double hValue = Double.MIN_VALUE;
+        double h2Value = Double.MIN_VALUE;
+        int l = 0, h = 0, h2 = 0;
+        for (int i = 0; i < pointsValues.length; i++) {
+            double ithValue = pointsValues[i];
+            if (ithValue < lValue) {
+                l = i;
+                lValue = ithValue;
+            } else if (ithValue > hValue) {
+                h = i;
+                hValue = ithValue;
+            } else if (ithValue > h2Value) {
+                h2 = i;
+                h2Value = ithValue;
+            }
+        }
+        return new int[]{l, h, h2};
+    }
+
+    /* Calculates centroid without point at index h. */
+    private IMatrix calculateCentroid(IMatrix[] points, int l, int h) {
+        IMatrix xC = points[l].copy();
+        for (int i = 0; i < points.length; i++) {
+            if (i == l || i == h) continue;
+            xC.add(points[i]);
+        }
+        return xC.scalarMul(1.0 / (points.length - 1));
+    }
+
+    /* xR = (1+alpha)*xC - alpha*xH. */
+    private IMatrix reflection(IMatrix xC, IMatrix xH) {
+        return xC.nScalarMul(alpha + 1).sub(xH.nScalarMul(alpha));
+    }
+
+    private boolean exitCondition(double[] pointsValues, double fXc, double epsilon) {
+        double stdDeviation = Math.sqrt(Arrays.stream(pointsValues)
+                .map(fXi -> Math.pow(fXi - fXc, 2))
+                .sum() / pointsValues.length);
+        return stdDeviation < epsilon;
     }
 
 }

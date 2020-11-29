@@ -9,8 +9,6 @@ import java.util.Properties;
  */
 public abstract class GradientOptAlgorithm extends AbstractOptAlgorithm {
 
-    protected static final int DIVERGENCE_LIMIT = 100;
-
     protected boolean optimized;
 
     /**

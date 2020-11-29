@@ -14,6 +14,7 @@ import java.util.Properties;
  */
 public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
 
+    private static final int DIVERGENCE_LIMIT = 100;
     private final static double DEFAULT_EPSILON = 1e-6;
 
     private IMatrix initialPoint;
@@ -22,6 +23,7 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
     private int iterations;
     private boolean configured;
     private ArgsConstraints constraints;
+    private int divergenceCounter;
 
     /**
      * Constructor is protected because of the singleton/factory design pattern.
@@ -166,6 +168,19 @@ public abstract class AbstractOptAlgorithm implements IOptAlgorithm {
      */
     protected void incrementIterations(int i) {
         iterations += i;
+    }
+
+    protected boolean isDiverging(double currentValue, double best) {
+        if (currentValue >= best) {
+            divergenceCounter++;
+            if (divergenceCounter == DIVERGENCE_LIMIT) {
+                System.out.println("Divergence limit was hit! Exiting...");
+                return true;
+            }
+        } else {
+            divergenceCounter = 0;
+        }
+        return false;
     }
 
 }

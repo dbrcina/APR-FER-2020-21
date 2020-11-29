@@ -31,11 +31,11 @@ public class ArgsConstraints {
         return point;
     }
 
-    public IMatrix testExplicitConstraints(IMatrix point) {
+    public IMatrix applyExplicitConstraints(IMatrix point) {
         for (double[] explicit : explicitConstraints) {
             for (int i = 0; i < point.getRowsCount(); i++) {
                 if (point.get(i, 0) < explicit[0]) point.set(i, 0, explicit[0]);
-                else if (point.get(i, 1) > explicit[1]) point.set(i, 0, explicit[1]);
+                else if (point.get(i, 0) > explicit[1]) point.set(i, 0, explicit[1]);
             }
         }
         return point;

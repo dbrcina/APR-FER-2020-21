@@ -69,17 +69,9 @@ public class GradientDescent extends GradientOptAlgorithm {
                 current.sub(gradient);
             }
             double currentValue = function.value(current);
-            if (currentValue >= bestValue) {
-                divergenceCounter++;
-                if (divergenceCounter == DIVERGENCE_LIMIT) {
-                    System.out.println("Divergence limit was hit! Exiting...");
-                    break;
-                }
-            } else {
-                divergenceCounter = 0;
-                solution = current.copy();
-                bestValue = function.value(solution);
-            }
+            if (isDiverging(currentValue, bestValue)) break;
+            solution = current.copy();
+            bestValue = function.value(solution);
         }
 
         return solution;

@@ -47,12 +47,12 @@ public class NewtonRaphson extends GradientOptAlgorithm {
             IMatrix gradient = function.gradient(current);
             IMatrix hesse = function.hesse(current);
             IMatrix hesseInverse = MatrixUtils.lupInvert(hesse);
-            IMatrix step = hesseInverse.mul(gradient).scalarMul(-1);
+            IMatrix step = hesseInverse.mul(gradient);
             if (gr != null) {
                 IFunction surrogateFun = new AbstractFunction() {
                     @Override
                     public double value(IMatrix point) {
-                        return function.value(current.nAdd(step.nScalarMul(-1 * point.get(0, 0))));
+                        return function.value(current.nAdd(step.nScalarMul(point.get(0, 0))));
                     }
 
                     @Override
@@ -67,24 +67,16 @@ public class NewtonRaphson extends GradientOptAlgorithm {
                 };
                 gr.setInitialPoint(new Matrix(1, 1).set(0, 0, 0));
                 IMatrix lambdaMin = gr.run(surrogateFun);
-                step.scalarMul(-1 * lambdaMin.get(0, 0));
+                step.scalarMul(lambdaMin.get(0, 0));
             }
 
             if (l2Norm(step) < epsilon) break;
             current.add(step);
 
             double currentValue = function.value(current);
-            if (currentValue >= bestValue) {
-                divergenceCounter++;
-                if (divergenceCounter == DIVERGENCE_LIMIT) {
-                    System.out.println("Divergence limit was hit! Exiting...");
-                    break;
-                }
-            } else {
-                divergenceCounter = 0;
-                solution = current.copy();
-                bestValue = function.value(solution);
-            }
+            if (isDiverging(currentValue, bestValue)) break;
+            solution = current.copy();
+            bestValue = function.value(solution);
         }
 
         return solution;

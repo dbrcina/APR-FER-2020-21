@@ -6,6 +6,7 @@ import hr.fer.zemris.apr.hw03.function.F2;
 import hr.fer.zemris.apr.hw03.function.F3;
 import hr.fer.zemris.apr.hw03.function.F4;
 import hr.fer.zemris.apr.hw03.function.IFunction;
+import hr.fer.zemris.apr.hw03.optimization.ArgsConstraints;
 import hr.fer.zemris.apr.hw03.optimization.IOptAlgorithm;
 import hr.fer.zemris.apr.hw03.optimization.OptAlgorithmProvider;
 
@@ -13,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 /**
  * Demo program that runs through all task problems.
@@ -34,10 +36,10 @@ public class Demo {
         System.out.println();
         System.out.println("-------------------------------------------");
         System.out.println();
-//        task3();
-//        System.out.println();
-//        System.out.println("-------------------------------------------");
-//        System.out.println();
+        task3();
+        System.out.println();
+        System.out.println("-------------------------------------------");
+        System.out.println();
 //        task4();
 //        System.out.println();
 //        System.out.println("-------------------------------------------");
@@ -78,21 +80,33 @@ public class Demo {
         printAlgResults(nr, function);
     }
 
-    //    private static void task3() throws Exception {
-//        System.out.println("#### Starting task 3 ####");
-//        String configFile = RESOURCES_FOLDER + "task3/configuration.properties";
-//        PROPERTIES.load(Files.newInputStream(Paths.get(configFile)));
-//        IOptAlgorithm alg = OptAlgorithmProvider.getInstance("HookeJeeves");
-//        alg.configure(PROPERTIES);
-//        printAlgResults(alg, FUNCTIONS[3]);
-//        System.out.println("------------------------");
-//        alg = OptAlgorithmProvider.getInstance("Simplex");
-//        alg.configure(PROPERTIES);
-//        printAlgResults(alg, FUNCTIONS[3]);
-//        System.out.println("------------------------");
-//    }
-//
-//    private static void task4() throws Exception {
+    private static void task3() throws Exception {
+        System.out.println("\t\t####### Starting task 3 #######");
+        System.out.println();
+        task3("1", FUNCTIONS[0]);
+        System.out.println("-------------------------------------------");
+        task3("2", FUNCTIONS[1]);
+    }
+
+    private static void task3(String funNum, IFunction function) throws Exception {
+        System.out.println("# Simulating function F" + funNum + " #");
+        String configFile = RESOURCES_FOLDER + "task3/f" + funNum + "/configuration.properties";
+        PROPERTIES.load(Files.newInputStream(Paths.get(configFile)));
+        IOptAlgorithm box = OptAlgorithmProvider.getInstance("Box");
+        box.configure(PROPERTIES);
+        double[][] explicitConstraints = {
+                {-100, 100},
+                {-100, 100}
+        };
+        Predicate<double[]>[] implicitConstraints = (Predicate<double[]>[]) new Predicate<?>[2];
+        implicitConstraints[0] = args -> args[1] - args[0] >= 0;
+        implicitConstraints[1] = args -> 2 - args[0] >= 0;
+        ArgsConstraints constraints = new ArgsConstraints(explicitConstraints, implicitConstraints);
+        box.setConstraints(constraints);
+        printAlgResults(box, function);
+    }
+
+    //    private static void task4() throws Exception {
 //        System.out.println("#### Starting task 4 ####");
 //        task4("1");
 //        System.out.println();
