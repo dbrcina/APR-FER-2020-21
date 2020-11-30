@@ -2,6 +2,7 @@ package hr.fer.zemris.apr.hw03.optimization;
 
 import hr.fer.zemris.apr.hw01.math.IMatrix;
 import hr.fer.zemris.apr.hw03.function.IFunction;
+import hr.fer.zemris.apr.hw03.optimization.constraint.ArgsConstraints;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -44,7 +45,7 @@ public class Box extends AbstractOptAlgorithm {
     public IMatrix run(IFunction function) {
         super.run(function);
         ArgsConstraints constraints = getConstraints();
-        IMatrix x0 = constraints.applyExplicitConstraints(getInitialPoint());
+        IMatrix x0 = constraints.fitExplicitConstraints(getInitialPoint());
         if (!constraints.testImplicitConstraints(x0)) {
             System.out.println("Initial point doesn't satisfy implicit constraints! Exiting...");
             return x0;
@@ -64,12 +65,13 @@ public class Box extends AbstractOptAlgorithm {
             bestValue = pointsValues[l];
             xC = calculateCentroid(points, l, h);
             IMatrix xR = reflection(xC, points[h]);
-            constraints.applyExplicitConstraints(xR);
-            applyImplicitConstraints(xC, xR, constraints);
+            IMatrix finalXC = xC;
+            constraints.fitExplicitConstraints(xR);
+            constraints.fitImplicitConstraints(xR, p -> moveTowardsXc(p, finalXC));
             double fXr = function.value(xR);
             double fXh2 = pointsValues[h2];
             if (fXr > fXh2) {
-                xR = moveTowardsXc(xC, xR);
+                moveTowardsXc(xR, xC);
                 fXr = function.value(xR);
             }
             points[h] = xR;
@@ -85,7 +87,8 @@ public class Box extends AbstractOptAlgorithm {
         int nPointsAdded = 1;
         for (int i = 1; i < points.length; i++) {
             IMatrix point = constraints.generatePointUsingExplicitConstraints(RANDOM);
-            points[i] = applyImplicitConstraints(xC, point, constraints);
+            IMatrix finalXC = xC;
+            points[i] = constraints.fitImplicitConstraints(point, p -> moveTowardsXc(p, finalXC));
             nPointsAdded++;
             xC = points[0].copy();
             for (int j = 1; j < nPointsAdded; j++) {
@@ -96,15 +99,8 @@ public class Box extends AbstractOptAlgorithm {
         return points;
     }
 
-    private IMatrix applyImplicitConstraints(IMatrix xC, IMatrix point, ArgsConstraints constraints) {
-        while (!constraints.testImplicitConstraints(point)) {
-            point = moveTowardsXc(xC, point);
-        }
-        return point;
-    }
-
-    private IMatrix moveTowardsXc(IMatrix xC, IMatrix point) {
-        return point.add(xC).scalarMul(0.5);
+    private void moveTowardsXc(IMatrix point, IMatrix xC) {
+        point.add(xC).scalarMul(0.5);
     }
 
     /* Returns l, h and h2 indexes. */

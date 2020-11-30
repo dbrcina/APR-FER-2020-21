@@ -3,6 +3,7 @@ package hr.fer.zemris.apr.hw03.optimization;
 import hr.fer.zemris.apr.hw01.math.IMatrix;
 import hr.fer.zemris.apr.hw01.math.Matrix;
 import hr.fer.zemris.apr.hw03.function.IFunction;
+import hr.fer.zemris.apr.hw03.optimization.constraint.ArgsConstraints;
 
 import java.util.Arrays;
 import java.util.Properties;
