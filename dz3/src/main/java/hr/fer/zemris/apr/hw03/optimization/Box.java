@@ -57,6 +57,7 @@ public class Box extends AbstractOptAlgorithm {
         IMatrix xC;
         double epsilon = getEpsilons().get(0, 0);
         do {
+            incrementIterations(1);
             int[] indexes = findIndexes(pointsValues);
             l = indexes[0];
             h = indexes[1];

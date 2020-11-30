@@ -6,6 +6,7 @@ import hr.fer.zemris.apr.hw01.math.Matrix;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Models constraints for function's arguments.
@@ -46,8 +47,17 @@ public class ArgsConstraints {
         return Arrays.stream(implicitConstraints).allMatch(i -> i.testConstraint(point));
     }
 
-    public double[] applyImplicitConstraints(IMatrix point) {
+    public double[] applyEqualityConstraints(IMatrix point) {
+        return applyImplicitConstraints(point, i -> i instanceof EqualityConstraint);
+    }
+
+    public double[] applyInequalityConstraints(IMatrix point) {
+        return applyImplicitConstraints(point, i -> i instanceof InequalityConstraint);
+    }
+
+    private double[] applyImplicitConstraints(IMatrix point, Predicate<ImplicitConstraint> predicate) {
         return Arrays.stream(implicitConstraints)
+                .filter(predicate)
                 .mapToDouble(i -> i.applyConstraint(point))
                 .toArray();
     }
