@@ -64,6 +64,7 @@ public class MixedUnconstrained extends AbstractOptAlgorithm {
         }
 
         while (true) {
+            incrementIterations(1);
             IFunction f = new AbstractFunction() {
                 @Override
                 public double value(IMatrix point) {
