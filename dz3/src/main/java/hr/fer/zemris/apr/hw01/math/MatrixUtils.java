@@ -25,12 +25,12 @@ public class MatrixUtils {
     public static double DELTA = 1e-9;
 
     /**
-     * Creates identity vector <code>i</code> with provided dimension <code>n</code>.
+     * Creates identity vector {@code i} with provided dimension <code>n</code>.
      */
     public static final BiFunction<Integer, Integer, IMatrix> IDENTITY_VECTOR =
             (i, n) -> new Matrix(n, 1).set(i, 0, 1);
     /**
-     * Creates identity matrix with provided dimension <code>n</code>.
+     * Creates identity matrix with provided dimension {@code n}.
      */
     public static final Function<Integer, IMatrix> IDENTITY_MATRIX = n -> {
         IMatrix identity = new Matrix(n, n);
@@ -44,11 +44,13 @@ public class MatrixUtils {
     /* ------------------------- PARSE METHODS ------------------------ */
 
     /**
-     * Creates an instance of IMatrix whose definition is parsed from provided <code>file</code>. Each line in a file
+     * Creates an instance of IMatrix whose definition is parsed from provided {@code file}. Each line in a file
      * represents one row and in each row values are separated by spaces or tabs and they represent columns.
      *
      * @param file matrix definition.
+     *
      * @return IMatrix as a parse result.
+     *
      * @throws Exception if something goes wrong or file definition if is invalid.
      */
     public static IMatrix parseFromFile(String file) throws Exception {
@@ -78,7 +80,7 @@ public class MatrixUtils {
     /* ------------------------- PRINT METHODS ------------------------ */
 
     /**
-     * Prints provided <code>matrix</code> to <code>out</code> stream.
+     * Prints provided {@code matrix} to <code>out</code> stream.
      *
      * @param matrix matrix.
      * @param out    output stream.
@@ -101,15 +103,17 @@ public class MatrixUtils {
     /* --------------------- DECOMPOSITION METHODS -------------------- */
 
     /**
-     * Performs forward substitution operation on provided matrix <code>L</code> and matrix (vector) <code>b</code>,
-     * whose number of rows  should be equal to the dimensions of square matrix <code>L</code>. Changes are applied
-     * to the <code>b</code>'s real reference without copying.
+     * Performs forward substitution operation on provided matrix {@code L} and matrix (vector) <code>b</code>,
+     * whose number of rows  should be equal to the dimensions of square matrix {@code L}. Changes are applied
+     * to the {@code b}'s real reference without copying.
      *
      * @param L matrix L.
      * @param b vector b (n x 1).
+     *
      * @return IMatrix as a result of substitution.
-     * @throws IllegalArgumentException if matrix <code>L</code> is not square matrix or if dimensions of vector
-     *                                  <code>b</code> don't fit.
+     *
+     * @throws IllegalArgumentException if matrix {@code L} is not square matrix or if dimensions of vector
+     *                                  {@code b} don't fit.
      */
     public static IMatrix fs(IMatrix L, IMatrix b) {
         if (!L.isSquareMatrix()) {
@@ -128,15 +132,17 @@ public class MatrixUtils {
     }
 
     /**
-     * Performs backward substitution operation on provided matrix <code>U</code> and matrix (vector) <code>y</code>,
-     * whose number of rows should be equal to the dimensions of square matrix <code>U</code>. Changes are applied to
-     * the <code>y</code>'s real reference without copying.
+     * Performs backward substitution operation on provided matrix {@code U} and matrix (vector) <code>y</code>,
+     * whose number of rows should be equal to the dimensions of square matrix {@code U}. Changes are applied to
+     * the {@code y}'s real reference without copying.
      *
      * @param U matrix U.
      * @param y vector y (n x 1).
+     *
      * @return IMatrix as a result of substitution.
-     * @throws IllegalArgumentException if matrix <code>U</code> is not square matrix or if dimensions of vector
-     *                                  <code>y</code> don't fit.
+     *
+     * @throws IllegalArgumentException if matrix {@code U} is not square matrix or if dimensions of vector
+     *                                  {@code y} don't fit.
      * @throws ArithmeticException      division by zero occurs.
      */
     public static IMatrix bs(IMatrix U, IMatrix y) {
@@ -163,14 +169,16 @@ public class MatrixUtils {
     }
 
     /**
-     * Based on provided boolean flag <code>useLUP</code>, method performs <b>LUP Decomposition</b> if flag is set to
-     * <code>true</code>, otherwise it performs <b>LU Decomposition</b> on provided matrix <code>A</code>.
+     * Based on provided boolean flag {@code useLUP}, method performs <b>LUP Decomposition</b> if flag is set to
+     * {@code true}, otherwise it performs <b>LU Decomposition</b> on provided matrix <code>A</code>.
      * <b>LUP Decomposition</b> is <b>LU Decomposition</b> + partial pivoting by columns.
      *
      * @param A      matrix A.
      * @param useLUP boolean flag.
-     * @return an array that consists of matrix L, matrix U and (optionally) matrix P (it can be <code>null!</code>).
-     * @throws IllegalArgumentException if provided matrix <code>A</code> is not square matrix.
+     *
+     * @return an array that consists of matrix L, matrix U and (optionally) matrix P (it can be {@code null!}).
+     *
+     * @throws IllegalArgumentException if provided matrix {@code A} is not square matrix.
      * @throws ArithmeticException      if a pivot element is zero.
      */
     public static IMatrix[] luDecomposition(IMatrix A, boolean useLUP) {
@@ -214,6 +222,7 @@ public class MatrixUtils {
      * @param numOfRowsSwapped number of rows swapped in lup decomposition.
      * @param L                matrix L.
      * @param U                matrix U.
+     *
      * @return calculated determinant.
      */
     public static double lupDeterminant(int numOfRowsSwapped, IMatrix L, IMatrix U) {
@@ -221,13 +230,16 @@ public class MatrixUtils {
     }
 
     /**
-     * Calculates matrix inverse operation of provided matrix <code>A</code> using one <b>LUP Decomposition</b> and
-     * <code>n</code> <b>forward/backward substitutions</b> where <code>n</code> is dimension of square matrix
-     * <code>A</code>.
+     * Calculates matrix inverse operation of provided matrix {@code A} using one <b>LUP Decomposition</b> and
+     * {@code n} <b>forward/backward substitutions</b> where {@code n} is dimension of square matrix
+     * {@code A}. Method uses the same memory space, so if u want a new object, then send a copy of the matrix
+     * {@code A}.
      *
      * @param A square matrix.
+     *
      * @return inverted matrix.
-     * @throws IllegalArgumentException if provided matrix <code>A</code> is not square matrix.
+     *
+     * @throws IllegalArgumentException if provided matrix {@code A} is not square matrix.
      * @see #luDecomposition(IMatrix, boolean)
      * @see #fs(IMatrix, IMatrix)
      * @see #bs(IMatrix, IMatrix)

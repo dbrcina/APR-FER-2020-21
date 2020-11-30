@@ -21,6 +21,14 @@ public class ArgsConstraints {
         this.implicitConstraints = implicitConstraints;
     }
 
+    public double[][] getExplicitConstraints() {
+        return explicitConstraints;
+    }
+
+    public Predicate<double[]>[] getImplicitConstraints() {
+        return implicitConstraints;
+    }
+
     public IMatrix generatePointUsingExplicitConstraints(Random random) {
         IMatrix point = new Matrix(explicitConstraints.length, 1);
         for (int i = 0; i < explicitConstraints.length; i++) {

@@ -73,8 +73,6 @@ public class Demo {
         gd.configure(PROPERTIES);
         printAlgResults(gd, function);
         System.out.println();
-        configFile = RESOURCES_FOLDER + "task2/f" + funNum + "/configuration.properties";
-        PROPERTIES.load(Files.newInputStream(Paths.get(configFile)));
         IOptAlgorithm nr = OptAlgorithmProvider.getInstance("NewtonRaphson");
         nr.configure(PROPERTIES);
         printAlgResults(nr, function);
@@ -167,11 +165,15 @@ public class Demo {
         System.out.println("Minimizer                         = " + Arrays.toString(solution.columnData(0)));
         System.out.println("Minimum                           = " + function.value(solution));
         System.out.println("Function evaluated                = " + evaluatedTimes);
-        System.out.println("Function's gradient evaluated     = " + gradientEvaluatedTimes);
-        System.out.println("Function's Hesse matrix evaluated = " + hesseEvaluatedTimes);
+        if (gradientEvaluatedTimes != 0) {
+            System.out.println("Function's gradient evaluated     = " + gradientEvaluatedTimes);
+            function.resetGradientEvaluationCounter();
+        }
+        if (hesseEvaluatedTimes != 0) {
+            System.out.println("Function's Hesse matrix evaluated = " + hesseEvaluatedTimes);
+            function.resetHesseEvaluationCounter();
+        }
         function.resetEvaluationCounter();
-        function.resetGradientEvaluationCounter();
-        function.resetHesseEvaluationCounter();
     }
 
 }

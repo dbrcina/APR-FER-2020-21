@@ -109,16 +109,18 @@ public class Box extends AbstractOptAlgorithm {
 
     /* Returns l, h and h2 indexes. */
     private int[] findIndexes(double[] pointsValues) {
-        double lValue = Double.MAX_VALUE;
-        double hValue = Double.MIN_VALUE;
-        double h2Value = Double.MIN_VALUE;
+        double lValue = pointsValues[0];
+        double hValue = pointsValues[0];
+        double h2Value = hValue;
         int l = 0, h = 0, h2 = 0;
-        for (int i = 0; i < pointsValues.length; i++) {
+        for (int i = 1; i < pointsValues.length; i++) {
             double ithValue = pointsValues[i];
             if (ithValue < lValue) {
                 l = i;
                 lValue = ithValue;
             } else if (ithValue > hValue) {
+                h2 = h;
+                h2Value = hValue;
                 h = i;
                 hValue = ithValue;
             } else if (ithValue > h2Value) {

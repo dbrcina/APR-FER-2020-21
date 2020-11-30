@@ -40,13 +40,11 @@ public class NewtonRaphson extends GradientOptAlgorithm {
         if (gr != null) {
             gr.setEpsilons(new Matrix(1, 1).set(0, 0, epsilon));
         }
-        int divergenceCounter = 0;
 
         while (true) {
             incrementIterations(1);
             IMatrix gradient = function.gradient(current);
-            IMatrix hesse = function.hesse(current);
-            IMatrix hesseInverse = MatrixUtils.lupInvert(hesse);
+            IMatrix hesseInverse = MatrixUtils.lupInvert(function.hesse(current));
             IMatrix step = hesseInverse.mul(gradient);
             if (gr != null) {
                 IFunction surrogateFun = new AbstractFunction() {
@@ -71,7 +69,11 @@ public class NewtonRaphson extends GradientOptAlgorithm {
             }
 
             if (l2Norm(step) < epsilon) break;
-            current.add(step);
+            if (gr != null) {
+                current.add(step);
+            } else {
+                current.sub(step);
+            }
 
             double currentValue = function.value(current);
             if (isDiverging(currentValue, bestValue)) break;

@@ -39,7 +39,6 @@ public class GradientDescent extends GradientOptAlgorithm {
         if (gr != null) {
             gr.setEpsilons(new Matrix(1, 1).set(0, 0, epsilon));
         }
-        int divergenceCounter = 0;
 
         while (true) {
             incrementIterations(1);
