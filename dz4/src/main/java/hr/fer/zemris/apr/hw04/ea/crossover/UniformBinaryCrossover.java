@@ -4,7 +4,7 @@ import hr.fer.zemris.apr.hw04.ea.initializer.PopulationInitializer;
 import hr.fer.zemris.apr.hw04.ea.solution.Solution;
 
 /**
- * An implementation of {@link Crossover} interface which provides <i>uniform binary crossover</i>.
+ * An implementation of {@link Crossover} interface which provides <i>Uniform binary crossover</i>.
  *
  * @author dbrcina
  */
@@ -19,13 +19,14 @@ public class UniformBinaryCrossover implements Crossover<Solution<Boolean>> {
     @Override
     public Solution<Boolean> crossover(Solution<Boolean> parent1, Solution<Boolean> parent2) {
         int n = parent1.getNumberOfGenes();
-        Boolean[] child = initializer.generateSolution().getSubGenes(0, n);
-        Boolean[] p1 = parent1.getSubGenes(0, n);
-        Boolean[] p2 = parent2.getSubGenes(0, n);
+        Solution<Boolean> child = initializer.generateSolution();
         for (int i = 0; i < n; i++) {
-            child[i] = p1[i] & p2[i] | child[i] & (p1[i] ^ p2[i]);
+            Boolean g1 = parent1.getGene(i);
+            Boolean g2 = parent2.getGene(i);
+            Boolean r = child.getGene(i);
+            child.setGene(g1 & g2 | r & (g1 ^ g2), i);
         }
-        return new Solution<>(child);
+        return child;
     }
 
 }

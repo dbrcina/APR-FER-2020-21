@@ -90,7 +90,7 @@ public class Solution<G> implements Comparable<Solution<G>> {
      * @throws IndexOutOfBoundsException if the provided indexes are invalid.
      */
     public void setSubGenes(G[] genes, int fromIndex, int toIndex) {
-        Objects.checkFromToIndex(fromIndex, toIndex, genes.length);
+        Objects.checkFromToIndex(fromIndex, toIndex, this.genes.length);
         for (int i = 0, j = fromIndex; i < genes.length & j < toIndex; i++, j++) {
             setGene(genes[i], j);
         }

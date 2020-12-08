@@ -12,20 +12,15 @@ import java.util.Random;
 public class SimpleBinaryMutation implements Mutation<Solution<Boolean>> {
 
     private final Random random;
-    private final double p;
 
-    public SimpleBinaryMutation(Random random, double p) {
+    public SimpleBinaryMutation(Random random) {
         this.random = random;
-        this.p = p;
     }
 
     @Override
     public Solution<Boolean> mutate(Solution<Boolean> solution) {
-        for (int i = 0; i < solution.getNumberOfGenes(); i++) {
-            if (random.nextDouble() < p) {
-                solution.setGene(!solution.getGene(i), i);
-            }
-        }
+        int index = random.nextInt(solution.getNumberOfGenes());
+        solution.setGene(!solution.getGene(index), index);
         return solution;
     }
 

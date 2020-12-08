@@ -25,8 +25,8 @@ public class BLXACrossover implements Crossover<Solution<Double>> {
 
     @Override
     public Solution<Double> crossover(Solution<Double> parent1, Solution<Double> parent2) {
-        Double[] child = new Double[parent1.getNumberOfGenes()];
-        for (int i = 0; i < child.length; i++) {
+        Solution<Double> child = parent1.copy();
+        for (int i = 0; i < child.getNumberOfGenes(); i++) {
             double ci1 = parent1.getGene(i);
             double ci2 = parent2.getGene(i);
             double ciMin = Math.min(ci1, ci2);
@@ -34,9 +34,9 @@ public class BLXACrossover implements Crossover<Solution<Double>> {
             double interval = ciMax - ciMin;
             double lb = Math.max(lbs[i], ciMin - interval * alpha);
             double ub = Math.min(ubs[i], ciMax + interval * alpha);
-            child[i] = lb + random.nextDouble() * (ub - lb);
+            child.setGene(lb + random.nextDouble() * (ub - lb), i);
         }
-        return new Solution<>(child);
+        return child;
     }
 
 }

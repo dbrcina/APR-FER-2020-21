@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * An implementation of {@link Crossover} interface which provides <i>t-point crossover</i>.
+ * An implementation of {@link Crossover} interface which provides <i>T-point crossover</i>.
  *
  * @author dbrcina
  */
@@ -23,11 +23,11 @@ public class TPointCrossover implements Crossover<Solution<Boolean>> {
 
     @Override
     public Solution<Boolean> crossover(Solution<Boolean> parent1, Solution<Boolean> parent2) {
-        Boolean[] child = new Boolean[parent1.getNumberOfGenes()];
+        Solution<Boolean> child = parent1.copy();
         Set<Integer> points = new TreeSet<>();
         while (points.size() != t) {
-            int point = random.nextInt(child.length);
-            if (points.contains(point)) continue;
+            int point = random.nextInt(child.getNumberOfGenes());
+            if (point == 0 || point == child.getNumberOfGenes() - 1) continue;
             points.add(point);
         }
         int fromIndex = 0;
@@ -39,18 +39,18 @@ public class TPointCrossover implements Crossover<Solution<Boolean>> {
             } else {
                 genes = parent2.getSubGenes(fromIndex, toIndex);
             }
-            System.arraycopy(genes, 0, child, fromIndex, toIndex - fromIndex);
+            child.setSubGenes(genes, fromIndex, toIndex);
             firstParent = !firstParent;
-            fromIndex += toIndex;
+            fromIndex = toIndex;
         }
         if (firstParent) {
-            genes = parent1.getSubGenes(fromIndex, child.length);
+            genes = parent1.getSubGenes(fromIndex, child.getNumberOfGenes());
         } else {
-            genes = parent2.getSubGenes(fromIndex, child.length);
+            genes = parent2.getSubGenes(fromIndex, child.getNumberOfGenes());
         }
         // Apply after the last point.
-        System.arraycopy(genes, 0, child, fromIndex, child.length - fromIndex);
-        return new Solution<>(child);
+        child.setSubGenes(genes, fromIndex, child.getNumberOfGenes());
+        return child;
     }
 
 }

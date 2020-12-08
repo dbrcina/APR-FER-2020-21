@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * An implementation of {@link Selection} interface which provides <i>k-tournament selection</i>.
+ * An implementation of {@link Selection} interface which provides <i>K-tournament selection</i>.
  *
  * @author dbrcina
  */

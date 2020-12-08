@@ -32,7 +32,7 @@ public class Util {
         int[] bitsPerVariables = new int[precisions.length];
         for (int i = 0; i < bitsPerVariables.length; i++) {
             double n = Math.log10(Math.floor(1 + (ubs[i] - lbs[i]) * Math.pow(10, precisions[i]))) / Math.log10(2);
-            bitsPerVariables[i] = (int) (n + 1);
+            bitsPerVariables[i] = (int) Math.ceil(n);
         }
         return bitsPerVariables;
     }
