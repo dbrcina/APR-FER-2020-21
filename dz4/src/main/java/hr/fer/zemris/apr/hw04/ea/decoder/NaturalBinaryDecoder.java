@@ -25,8 +25,7 @@ public class NaturalBinaryDecoder extends BinaryDecoder {
         for (int i = 0; i < decoded.length; i++) {
             int toIndex = fromIndex + bitsPerVariables[i];
             Boolean[] currentVariable = solution.getSubGenes(fromIndex, toIndex);
-            int b = Integer.parseInt(Util.fromBooleanArray(currentVariable), 2);
-            decoded[i] = lbs[i] + b / (Math.pow(2, currentVariable.length) - 1) * (ubs[i] - lbs[i]);
+            decoded[i] = Util.fromBinaryToDouble(currentVariable, lbs[i], ubs[i]);
             fromIndex += currentVariable.length;
         }
         return decoded;

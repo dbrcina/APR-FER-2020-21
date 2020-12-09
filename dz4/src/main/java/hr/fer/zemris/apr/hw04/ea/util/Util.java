@@ -9,11 +9,23 @@ import java.util.stream.Collectors;
 public class Util {
 
     /**
+     * @param bits binary number.
+     * @param xMin lower bound.
+     * @param xMax upper bound.
+     *
+     * @return a double representation of binary number within [{@code xMin}, {@code xMax}].
+     */
+    public static double fromBinaryToDouble(Boolean[] bits, double xMin, double xMax) {
+        int b = Integer.parseInt(fromBooleanArrayToString(bits), 2);
+        return xMin + b / (Math.pow(2, bits.length) - 1) * (xMax - xMin);
+    }
+
+    /**
      * @param bits bits.
      *
      * @return a string representation of the provided {@code} bits array.
      */
-    public static String fromBooleanArray(Boolean[] bits) {
+    public static String fromBooleanArrayToString(Boolean[] bits) {
         return Arrays.stream(bits)
                 .map(bit -> bit ? "1" : "0")
                 .collect(Collectors.joining(""));
