@@ -32,6 +32,7 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
     private final Mutation<S> mutation;
     private final Decoder<S> decoder;
     private final FitnessFunction fitnessFunction;
+    private boolean verbose;
 
     public GeneticAlgorithm(
             Random random,
@@ -44,7 +45,8 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
             Crossover<S> crossover,
             Mutation<S> mutation,
             Decoder<S> decoder,
-            FitnessFunction fitnessFunction) {
+            FitnessFunction fitnessFunction,
+            boolean verbose) {
         this.random = random;
         this.populationSize = populationSize;
         this.tol = tol;
@@ -56,6 +58,7 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
         this.mutation = mutation;
         this.decoder = decoder;
         this.fitnessFunction = fitnessFunction;
+        this.verbose = verbose;
     }
 
     @Override
@@ -74,16 +77,18 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
             S currentBest = Collections.max(population);
             if (bestSolution == null || currentBest.getFitness() > bestSolution.getFitness()) {
                 bestSolution = currentBest;
-                System.out.printf("Iteration %d:%n" +
-                                "\tSolution = %s%n" +
-                                "\tFitness = %e%n" +
-                                "\tEvaluations = %d%n",
-                        iteration + 1,
-                        Arrays.toString(decoder.decode(bestSolution)),
-                        bestSolution.getFitness(),
-                        fitnessFunction.numberOfEvaluations()
-                );
-                System.out.println();
+                if (verbose) {
+                    System.out.printf("Iteration %d:%n" +
+                                    "\tSolution = %s%n" +
+                                    "\tFitness = %e%n" +
+                                    "\tEvaluations = %d%n",
+                            iteration + 1,
+                            Arrays.toString(decoder.decode(bestSolution)),
+                            bestSolution.getFitness(),
+                            fitnessFunction.numberOfEvaluations()
+                    );
+                    System.out.println();
+                }
             }
 
             // Exit condition.

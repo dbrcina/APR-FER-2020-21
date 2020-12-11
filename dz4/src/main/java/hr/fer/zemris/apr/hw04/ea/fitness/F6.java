@@ -24,7 +24,7 @@ public class F6 extends FitnessFunction {
                 .map(x -> x * x)
                 .sum();
         double nominator = Math.pow(Math.sin(Math.sqrt(squaredSum)), 2) - 0.5;
-        double denominator = Math.pow(1 + 0.001 + squaredSum, 2);
+        double denominator = Math.pow(1 + 0.001 * squaredSum, 2);
         double value = 0.5 + nominator / denominator;
         return -value;
     }
