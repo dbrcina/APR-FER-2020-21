@@ -12,14 +12,12 @@ import hr.fer.zemris.apr.hw04.ea.selection.KTournamentSelection;
 import hr.fer.zemris.apr.hw04.ea.solution.Solution;
 
 import java.util.Arrays;
-import java.util.Random;
 
 /**
  * @author dbrcina
  */
 public class Zadatak2 {
 
-    private static final Random RANDOM = new Random();
     private static final double X_MIN = -50;
     private static final double X_MAX = 150;
 
@@ -40,15 +38,14 @@ public class Zadatak2 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         Solution<Double> solution = new GeneticAlgorithm<>(
-                RANDOM,
                 100,
                 1e-6,
                 50_000,
                 0.1,
-                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 3),
-                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 0.01, lbs, ubs),
+                new RandomDoublePopulationInitializer(lbs, ubs),
+                new KTournamentSelection<>(3),
+                new BLXACrossover(0.5, lbs, ubs),
+                new GaussMutation(0.01, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false).run();
@@ -61,15 +58,14 @@ public class Zadatak2 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         solution = new GeneticAlgorithm<>(
-                RANDOM,
                 200,
                 1e-6,
                 100_000,
                 0.7,
-                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 3),
-                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 3, lbs, ubs),
+                new RandomDoublePopulationInitializer(lbs, ubs),
+                new KTournamentSelection<>(3),
+                new BLXACrossover(0.5, lbs, ubs),
+                new GaussMutation(3, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false).run();
@@ -82,15 +78,14 @@ public class Zadatak2 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         solution = new GeneticAlgorithm<>(
-                RANDOM,
                 200,
                 1e-6,
                 100_000,
                 0.7,
-                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 3),
-                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 5, lbs, ubs),
+                new RandomDoublePopulationInitializer(lbs, ubs),
+                new KTournamentSelection<>(3),
+                new BLXACrossover(0.5, lbs, ubs),
+                new GaussMutation(5, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false).run();
@@ -103,15 +98,14 @@ public class Zadatak2 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         solution = new GeneticAlgorithm<>(
-                RANDOM,
                 200,
                 1e-6,
                 200_000,
                 0.8,
-                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 3),
-                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 5, lbs, ubs),
+                new RandomDoublePopulationInitializer(lbs, ubs),
+                new KTournamentSelection<>(3),
+                new BLXACrossover(0.5, lbs, ubs),
+                new GaussMutation(5, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false).run();
@@ -127,15 +121,14 @@ public class Zadatak2 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         Solution<Double> solution = new GeneticAlgorithm<>(
-                RANDOM,
                 100,
                 1e-6,
                 50_000,
                 0.1,
-                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 3),
-                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 0.01, lbs, ubs),
+                new RandomDoublePopulationInitializer(lbs, ubs),
+                new KTournamentSelection<>(3),
+                new BLXACrossover(0.5, lbs, ubs),
+                new GaussMutation(0.01, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false).run();
@@ -148,15 +141,14 @@ public class Zadatak2 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         solution = new GeneticAlgorithm<>(
-                RANDOM,
                 100,
                 1e-6,
                 50_000,
                 0.1,
-                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 3),
-                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 0.01, lbs, ubs),
+                new RandomDoublePopulationInitializer(lbs, ubs),
+                new KTournamentSelection<>(3),
+                new BLXACrossover(0.5, lbs, ubs),
+                new GaussMutation(0.01, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false).run();
@@ -169,15 +161,14 @@ public class Zadatak2 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         solution = new GeneticAlgorithm<>(
-                RANDOM,
                 200,
                 1e-6,
                 200_000,
                 0.2,
-                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 3),
-                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 1, lbs, ubs),
+                new RandomDoublePopulationInitializer(lbs, ubs),
+                new KTournamentSelection<>(3),
+                new BLXACrossover(0.5, lbs, ubs),
+                new GaussMutation(1, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false).run();
@@ -190,15 +181,14 @@ public class Zadatak2 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         solution = new GeneticAlgorithm<>(
-                RANDOM,
                 200,
                 1e-6,
                 200_000,
                 0.5,
-                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 3),
-                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 1, lbs, ubs),
+                new RandomDoublePopulationInitializer(lbs, ubs),
+                new KTournamentSelection<>(3),
+                new BLXACrossover(0.5, lbs, ubs),
+                new GaussMutation(1, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false).run();

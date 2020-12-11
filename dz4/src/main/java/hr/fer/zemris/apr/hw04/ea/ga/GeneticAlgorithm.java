@@ -21,7 +21,7 @@ import java.util.Random;
  */
 public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgorithm<S> {
 
-    private final Random random;
+    private final Random random = new Random();
     private final int populationSize;
     private final double tol;
     private final int maxEvaluations;
@@ -35,7 +35,6 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
     private boolean verbose;
 
     public GeneticAlgorithm(
-            Random random,
             int populationSize,
             double tol,
             int maxEvaluations,
@@ -47,7 +46,6 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
             Decoder<S> decoder,
             FitnessFunction fitnessFunction,
             boolean verbose) {
-        this.random = random;
         this.populationSize = populationSize;
         this.tol = tol;
         this.maxEvaluations = maxEvaluations;

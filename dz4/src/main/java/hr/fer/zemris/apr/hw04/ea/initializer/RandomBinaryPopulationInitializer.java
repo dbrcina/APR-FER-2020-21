@@ -13,11 +13,10 @@ import java.util.Random;
  */
 public class RandomBinaryPopulationInitializer implements PopulationInitializer<Solution<Boolean>> {
 
-    private final Random random;
+    private final Random random = new Random();
     private final int[] bitsPerVariables;
 
-    public RandomBinaryPopulationInitializer(Random random, int[] bitsPerVariables) {
-        this.random = random;
+    public RandomBinaryPopulationInitializer(int[] bitsPerVariables) {
         this.bitsPerVariables = bitsPerVariables;
     }
 

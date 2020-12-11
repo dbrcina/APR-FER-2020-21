@@ -12,12 +12,11 @@ import java.util.Random;
  */
 public class RandomDoublePopulationInitializer implements PopulationInitializer<Solution<Double>> {
 
-    private final Random random;
+    private final Random random = new Random();
     private final double[] lbs;
     private final double[] ubs;
 
-    public RandomDoublePopulationInitializer(Random random, double[] lbs, double[] ubs) {
-        this.random = random;
+    public RandomDoublePopulationInitializer(double[] lbs, double[] ubs) {
         this.lbs = lbs;
         this.ubs = ubs;
     }

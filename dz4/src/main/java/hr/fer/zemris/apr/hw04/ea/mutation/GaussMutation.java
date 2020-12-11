@@ -11,13 +11,12 @@ import java.util.Random;
  */
 public class GaussMutation implements Mutation<Solution<Double>> {
 
-    private final Random random;
+    private final Random random = new Random();
     private final double sigma;
     private final double[] lbs;
     private final double[] ubs;
 
-    public GaussMutation(Random random, double sigma, double[] lbs, double[] ubs) {
-        this.random = random;
+    public GaussMutation(double sigma, double[] lbs, double[] ubs) {
         this.sigma = sigma;
         this.lbs = lbs;
         this.ubs = ubs;
