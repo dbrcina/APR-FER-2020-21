@@ -11,6 +11,7 @@ import hr.fer.zemris.apr.hw04.ea.mutation.GaussMutation;
 import hr.fer.zemris.apr.hw04.ea.selection.KTournamentSelection;
 import hr.fer.zemris.apr.hw04.ea.solution.Solution;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -36,10 +37,52 @@ public class Zadatak4 {
         switch (args[0]) {
             case "population" -> optimizePopulation();
             case "mutation" -> optimizeMutation();
+            case "optimal" -> optimal();
         }
     }
 
-    private static void optimizePopulation() { // optimal 50
+    private static void optimal() {
+        FitnessFunction f = new F6(3);
+        double[] lbs = new double[f.numberOfVariables()];
+        double[] ubs = new double[f.numberOfVariables()];
+        Arrays.fill(lbs, X_MIN);
+        Arrays.fill(ubs, X_MAX);
+        EvolutionaryAlgorithm<Solution<Double>> alg = new GeneticAlgorithm<>(
+                RANDOM,
+                100,
+                TOL,
+                MAX_EVALUATIONS,
+                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
+                new KTournamentSelection<>(RANDOM, 3),
+                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
+                new GaussMutation(RANDOM, 1.5, 0.9, lbs, ubs),
+                new PassThroughDecoder(lbs, ubs),
+                f,
+                false
+        );
+        double[] fitnessVector = new double[30];
+        for (int i = 0; i < fitnessVector.length; i++) {
+            Solution<?> solution = alg.run();
+            fitnessVector[i] = solution.getFitness();
+            f.resetEvaluationsCounter();
+        }
+        String file = "data/optimal_population_mutation.txt";
+        try (BufferedWriter wr = Files.newBufferedWriter(Paths.get(file))) {
+            System.out.println("Saving to " + file + "...");
+            wr.write(Arrays.stream(fitnessVector)
+                    .mapToObj(String::valueOf)
+                    .collect(Collectors.joining(" "))
+            );
+            wr.flush();
+            System.out.println("Saved successfully!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Saving failed!");
+            System.exit(-1);
+        }
+    }
+
+    private static void optimizePopulation() { // optimal 100
         List<Integer> popSizes = List.of(30, 50, 100, 200);
         FitnessFunction f = new F6(3);
         double[] lbs = new double[f.numberOfVariables()];
@@ -81,7 +124,7 @@ public class Zadatak4 {
         for (int i = 0; i < mutations.size(); i++) {
             EvolutionaryAlgorithm<? extends Solution<?>> alg = new GeneticAlgorithm<>(
                     RANDOM,
-                    50,
+                    100,
                     TOL,
                     MAX_EVALUATIONS,
                     new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),

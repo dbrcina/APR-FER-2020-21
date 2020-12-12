@@ -2,14 +2,11 @@ package hr.fer.zemris.apr.hw04;
 
 import hr.fer.zemris.apr.hw04.ea.EvolutionaryAlgorithm;
 import hr.fer.zemris.apr.hw04.ea.crossover.BLXACrossover;
-import hr.fer.zemris.apr.hw04.ea.crossover.UniformBinaryCrossover;
-import hr.fer.zemris.apr.hw04.ea.decoder.GrayDecoder;
+import hr.fer.zemris.apr.hw04.ea.crossover.MultiPointCrossover;
+import hr.fer.zemris.apr.hw04.ea.decoder.NaturalBinaryDecoder;
 import hr.fer.zemris.apr.hw04.ea.decoder.PassThroughDecoder;
-import hr.fer.zemris.apr.hw04.ea.fitness.F6;
-import hr.fer.zemris.apr.hw04.ea.fitness.F7;
 import hr.fer.zemris.apr.hw04.ea.fitness.FitnessFunction;
 import hr.fer.zemris.apr.hw04.ea.ga.GeneticAlgorithm;
-import hr.fer.zemris.apr.hw04.ea.initializer.PopulationInitializer;
 import hr.fer.zemris.apr.hw04.ea.initializer.RandomBinaryPopulationInitializer;
 import hr.fer.zemris.apr.hw04.ea.initializer.RandomDoublePopulationInitializer;
 import hr.fer.zemris.apr.hw04.ea.mutation.GaussMutation;
@@ -31,33 +28,39 @@ import java.util.stream.Collectors;
  */
 public class Zadatak3 {
 
+    /*
+     * F6 dimenzija 3:
+     *  Decimal:
+     *      -popSize=200, sigma=1.6, p=0.5, turnir=3, blxa=0.5, eval=1e5
+     *  Binary:
+     *      -popSize=200, pm=0.01, turnir=3, multi-point=2, natural-decoder, eval=1e5
+     */
     private static final Random RANDOM = new Random();
     private static final double X_MIN = -50;
     private static final double X_MAX = 150;
-    private static final int POPULATION_SIZE = 200;
     private static final double TOL = 1e-6;
     private static final int MAX_EVALUATIONS = (int) 1e5;
 
     public static void main(String[] args) {
         System.out.println("\t#### Starting task 3! ####");
-        fDecimal(new F6(3), 1, 0.6, "data/f6d3d.txt");
-        fDecimal(new F6(6), 1, 0.6, "data/f6d6d.txt");
-        fDecimal(new F7(3), 1, 0.5, "data/f7d3d.txt");
-        fDecimal(new F7(6), 1, 0.5, "data/f7d6d.txt");
-        fBinary(new F6(3), 0.04, "data/f6d3b.txt");
-        fBinary(new F6(6), 0.04, "data/f6d6b.txt");
-        fBinary(new F7(3), 0.04, "data/f7d3b.txt");
-        fBinary(new F7(6), 0.04, "data/f7d6b.txt");
+//        fDecimal(new F6(3), 200, 1.6, 0.5, "data/f6d3d.txt");
+//        fBinary(new F6(3), 200, 0.01, "data/f6d3b.txt");
+//        fDecimal(new F6(6), 1, 0.6, "data/f6d6d.txt");
+//        fDecimal(new F7(3), 1, 0.5, "data/f7d3d.txt");
+//        fDecimal(new F7(6), 1, 0.5, "data/f7d6d.txt");
+//        fBinary(new F6(6), 0.04, "data/f6d6b.txt");
+//        fBinary(new F7(3), 0.04, "data/f7d3b.txt");
+//        fBinary(new F7(6), 0.04, "data/f7d6b.txt");
     }
 
-    private static void fDecimal(FitnessFunction f, double sigma, double p, String file) {
+    private static void fDecimal(FitnessFunction f, int populationSize, double sigma, double p, String file) {
         double[] lbs = new double[f.numberOfVariables()];
         double[] ubs = new double[f.numberOfVariables()];
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         EvolutionaryAlgorithm<? extends Solution<?>> alg = new GeneticAlgorithm<>(
                 RANDOM,
-                POPULATION_SIZE,
+                populationSize,
                 TOL,
                 MAX_EVALUATIONS,
                 new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
@@ -71,7 +74,7 @@ public class Zadatak3 {
         saveToFile(alg, f, file);
     }
 
-    private static void fBinary(FitnessFunction f, double p, String file) {
+    private static void fBinary(FitnessFunction f, int populationSize, double p, String file) {
         double[] lbs = new double[f.numberOfVariables()];
         double[] ubs = new double[f.numberOfVariables()];
         double[] precisions = new double[f.numberOfVariables()];
@@ -79,18 +82,16 @@ public class Zadatak3 {
         Arrays.fill(ubs, X_MAX);
         Arrays.fill(precisions, 4);
         int[] bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
-        PopulationInitializer<Solution<Boolean>> initializer =
-                new RandomBinaryPopulationInitializer(RANDOM, bitsPerVariables);
         EvolutionaryAlgorithm<? extends Solution<?>> alg = new GeneticAlgorithm<>(
                 RANDOM,
-                POPULATION_SIZE,
+                populationSize,
                 TOL,
                 MAX_EVALUATIONS,
-                initializer,
+                new RandomBinaryPopulationInitializer(RANDOM, bitsPerVariables),
                 new KTournamentSelection<>(RANDOM, 3),
-                new UniformBinaryCrossover(RANDOM),
+                new MultiPointCrossover(RANDOM, 2),
                 new SimpleBinaryMutation(RANDOM, p),
-                new GrayDecoder(lbs, ubs, bitsPerVariables),
+                new NaturalBinaryDecoder(lbs, ubs, bitsPerVariables),
                 f,
                 false
         );
