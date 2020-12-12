@@ -3,18 +3,17 @@ package hr.fer.zemris.apr.hw04.ea.crossover;
 import hr.fer.zemris.apr.hw04.ea.solution.Solution;
 
 /**
- * An implementation of {@link Crossover} interface which provides <i>Arithmetic double crossover</i>.
+ * An implementation of {@link Crossover} interface which provides <i>Arithmetic crossover</i>.
  *
  * @author dbrcina
  */
-public class ArithmeticDoubleCrossover implements Crossover<Solution<Double>> {
+public class ArithmeticCrossover implements Crossover<Solution<Double>> {
 
     private final double alpha;
 
-    public ArithmeticDoubleCrossover(double alpha) {
+    public ArithmeticCrossover(double alpha) {
         this.alpha = alpha;
     }
-
 
     @Override
     public Solution<Double> crossover(Solution<Double> parent1, Solution<Double> parent2) {

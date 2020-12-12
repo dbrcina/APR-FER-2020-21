@@ -13,22 +13,28 @@ public class GaussMutation implements Mutation<Solution<Double>> {
 
     private final Random random;
     private final double sigma;
+    private final double p;
     private final double[] lbs;
     private final double[] ubs;
 
-    public GaussMutation(Random random, double sigma, double[] lbs, double[] ubs) {
+    public GaussMutation(Random random, double sigma, double p, double[] lbs, double[] ubs) {
         this.random = random;
         this.sigma = sigma;
+        this.p = p;
         this.lbs = lbs;
         this.ubs = ubs;
     }
 
     @Override
     public Solution<Double> mutate(Solution<Double> solution) {
+        if (random.nextDouble() >= p) return solution;
         for (int i = 0; i < solution.getNumberOfGenes(); i++) {
             double newValue = solution.getGene(i) + random.nextGaussian() * sigma;
-            if (newValue < lbs[i]) newValue = lbs[i];
-            else if (newValue > ubs[i]) newValue = ubs[i];
+            if (newValue < lbs[i]) {
+                newValue = lbs[i];
+            } else if (newValue > ubs[i]) {
+                newValue = ubs[i];
+            }
             solution.setGene(newValue, i);
         }
         return solution;

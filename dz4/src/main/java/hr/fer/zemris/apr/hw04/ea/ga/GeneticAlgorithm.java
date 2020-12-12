@@ -25,7 +25,6 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
     private final int populationSize;
     private final double tol;
     private final int maxEvaluations;
-    private final double mutationProb;
     private final PopulationInitializer<S> initializer;
     private final Selection<S> selection;
     private final Crossover<S> crossover;
@@ -39,7 +38,6 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
             int populationSize,
             double tol,
             int maxEvaluations,
-            double mutationProb,
             PopulationInitializer<S> initializer,
             Selection<S> selection,
             Crossover<S> crossover,
@@ -51,7 +49,6 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
         this.populationSize = populationSize;
         this.tol = tol;
         this.maxEvaluations = maxEvaluations;
-        this.mutationProb = mutationProb;
         this.initializer = initializer;
         this.selection = selection;
         this.crossover = crossover;
@@ -102,9 +99,7 @@ public class GeneticAlgorithm<S extends Solution<?>> implements EvolutionaryAlgo
             S p1 = selected[0];
             S p2 = selected[1];
             S child = crossover.crossover(p1, p2);
-            if (random.nextDouble() < mutationProb) {
-                child = mutation.mutate(child);
-            }
+            child = mutation.mutate(child);
             child.setFitness(fitnessFunction.calculateFitness(decoder.decode(child)));
             int index = population.indexOf(selected[selected.length - 1]);
             population.set(index, child);

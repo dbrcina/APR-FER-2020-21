@@ -7,16 +7,16 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * An implementation of {@link Crossover} interface which provides <i>T-point crossover</i>.
+ * An implementation of {@link Crossover} interface which provides <i>Multi-point crossover</i>.
  *
  * @author dbrcina
  */
-public class TPointCrossover implements Crossover<Solution<Boolean>> {
+public class MultiPointCrossover implements Crossover<Solution<Boolean>> {
 
     private final Random random;
     private final int t;
 
-    public TPointCrossover(Random random, int t) {
+    public MultiPointCrossover(Random random, int t) {
         this.random = random;
         this.t = t;
     }

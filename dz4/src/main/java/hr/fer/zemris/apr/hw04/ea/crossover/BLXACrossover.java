@@ -34,7 +34,8 @@ public class BLXACrossover implements Crossover<Solution<Double>> {
             double interval = ciMax - ciMin;
             double lb = Math.max(lbs[i], ciMin - interval * alpha);
             double ub = Math.min(ubs[i], ciMax + interval * alpha);
-            child.setGene(lb + random.nextDouble() * (ub - lb), i);
+            double gene = lb + random.nextDouble() * (ub - lb);
+            child.setGene(gene, i);
         }
         return child;
     }

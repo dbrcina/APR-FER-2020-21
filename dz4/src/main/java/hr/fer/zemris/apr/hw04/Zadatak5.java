@@ -3,7 +3,7 @@ package hr.fer.zemris.apr.hw04;
 import hr.fer.zemris.apr.hw04.ea.EvolutionaryAlgorithm;
 import hr.fer.zemris.apr.hw04.ea.crossover.BLXACrossover;
 import hr.fer.zemris.apr.hw04.ea.decoder.PassThroughDecoder;
-import hr.fer.zemris.apr.hw04.ea.fitness.F7;
+import hr.fer.zemris.apr.hw04.ea.fitness.F6;
 import hr.fer.zemris.apr.hw04.ea.fitness.FitnessFunction;
 import hr.fer.zemris.apr.hw04.ea.ga.GeneticAlgorithm;
 import hr.fer.zemris.apr.hw04.ea.initializer.RandomDoublePopulationInitializer;
@@ -29,7 +29,7 @@ public class Zadatak5 {
 
     public static void main(String[] args) {
         List<Integer> ks = List.of(3, 5, 10, 15, 20, 25, 30, 40, 50);
-        FitnessFunction f = new F7(3);
+        FitnessFunction f = new F6(3);
         double[] lbs = new double[f.numberOfVariables()];
         double[] ubs = new double[f.numberOfVariables()];
         Arrays.fill(lbs, -50);
@@ -38,14 +38,13 @@ public class Zadatak5 {
         for (int i = 0; i < ks.size(); i++) {
             EvolutionaryAlgorithm<? extends Solution<?>> alg = new GeneticAlgorithm<>(
                     RANDOM,
-                    200,
+                    50,
                     1e-6,
                     (int) 1e5,
-                    0.2,
                     new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
                     new KTournamentSelection<>(RANDOM, ks.get(i)),
                     new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                    new GaussMutation(RANDOM, 1, lbs, ubs),
+                    new GaussMutation(RANDOM, 1.5, 0.9, lbs, ubs),
                     new PassThroughDecoder(lbs, ubs),
                     f,
                     false

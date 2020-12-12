@@ -30,10 +30,6 @@ public class Zadatak4 {
     private static final double X_MAX = 150;
     private static final double TOL = 1e-6;
     private static final int MAX_EVALUATIONS = (int) 1e5;
-    private static final double MUTATION_PROB = 0.7;
-    private static final int K = 5;
-    private static final double ALPHA = 0.5;
-    private static final double SIGMA = 2;
 
     public static void main(String[] args) {
         System.out.println("\t#### Starting task 4! ####");
@@ -43,7 +39,7 @@ public class Zadatak4 {
         }
     }
 
-    private static void optimizePopulation() {
+    private static void optimizePopulation() { // optimal 50
         List<Integer> popSizes = List.of(30, 50, 100, 200);
         FitnessFunction f = new F6(3);
         double[] lbs = new double[f.numberOfVariables()];
@@ -57,11 +53,10 @@ public class Zadatak4 {
                     popSizes.get(i),
                     TOL,
                     MAX_EVALUATIONS,
-                    MUTATION_PROB,
                     new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                    new KTournamentSelection<>(RANDOM, K),
-                    new BLXACrossover(RANDOM, ALPHA, lbs, ubs),
-                    new GaussMutation(RANDOM, SIGMA, lbs, ubs),
+                    new KTournamentSelection<>(RANDOM, 3),
+                    new BLXACrossover(RANDOM, 0.5, lbs, ubs),
+                    new GaussMutation(RANDOM, 1.5, 0.9, lbs, ubs),
                     new PassThroughDecoder(lbs, ubs),
                     f,
                     false
@@ -75,7 +70,7 @@ public class Zadatak4 {
         writeToCSV(header, data, "data/population_sizes.csv");
     }
 
-    private static void optimizeMutation() {
+    private static void optimizeMutation() { // optimal 0.9
         List<Double> mutations = List.of(0.1, 0.3, 0.6, 0.9);
         FitnessFunction f = new F6(3);
         double[] lbs = new double[f.numberOfVariables()];
@@ -86,14 +81,13 @@ public class Zadatak4 {
         for (int i = 0; i < mutations.size(); i++) {
             EvolutionaryAlgorithm<? extends Solution<?>> alg = new GeneticAlgorithm<>(
                     RANDOM,
-                    200,
+                    50,
                     TOL,
                     MAX_EVALUATIONS,
-                    mutations.get(i),
                     new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                    new KTournamentSelection<>(RANDOM, K),
-                    new BLXACrossover(RANDOM, ALPHA, lbs, ubs),
-                    new GaussMutation(RANDOM, SIGMA, lbs, ubs),
+                    new KTournamentSelection<>(RANDOM, 3),
+                    new BLXACrossover(RANDOM, 0.5, lbs, ubs),
+                    new GaussMutation(RANDOM, 1.5, mutations.get(i), lbs, ubs),
                     new PassThroughDecoder(lbs, ubs),
                     f,
                     false
