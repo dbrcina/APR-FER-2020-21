@@ -16,12 +16,14 @@ import hr.fer.zemris.apr.hw04.ea.solution.Solution;
 import hr.fer.zemris.apr.hw04.ea.util.Util;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * @author dbrcina
  */
 public class Zadatak1 {
 
+    private static final Random RANDOM = new Random();
     private static final FitnessFunction F1 = new F1();
     private static final FitnessFunction F3 = new F3(5);
     private static final FitnessFunction F6 = new F6(2);
@@ -51,14 +53,15 @@ public class Zadatak1 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         new GeneticAlgorithm<>(
+                RANDOM,
                 100,
                 1e-6,
                 50_000,
                 0.2,
-                new RandomDoublePopulationInitializer(lbs, ubs),
-                new KTournamentSelection<>(3),
-                new BLXACrossover(0.5, lbs, ubs),
-                new GaussMutation(0.1, lbs, ubs),
+                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
+                new KTournamentSelection<>(RANDOM, 3),
+                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
+                new GaussMutation(RANDOM, 0.1, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 F1,
                 true).run();
@@ -73,14 +76,15 @@ public class Zadatak1 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         new GeneticAlgorithm<>(
+                RANDOM,
                 100,
                 1e-6,
                 50_000,
                 0.2,
-                new RandomDoublePopulationInitializer(lbs, ubs),
-                new KTournamentSelection<>(3),
-                new BLXACrossover(0.5, lbs, ubs),
-                new GaussMutation(0.01, lbs, ubs),
+                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
+                new KTournamentSelection<>(RANDOM, 3),
+                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
+                new GaussMutation(RANDOM, 0.01, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 F3,
                 true).run();
@@ -95,14 +99,15 @@ public class Zadatak1 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         new GeneticAlgorithm<>(
+                RANDOM,
                 100,
                 1e-6,
                 50_000,
                 0.5,
-                new RandomDoublePopulationInitializer(lbs, ubs),
-                new KTournamentSelection<>(3),
-                new BLXACrossover(0.5, lbs, ubs),
-                new GaussMutation(1.5, lbs, ubs),
+                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
+                new KTournamentSelection<>(RANDOM, 3),
+                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
+                new GaussMutation(RANDOM, 1.5, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 F6,
                 true).run();
@@ -117,14 +122,15 @@ public class Zadatak1 {
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
         new GeneticAlgorithm<>(
+                RANDOM,
                 100,
                 1e-6,
                 50_000,
                 0.2,
-                new RandomDoublePopulationInitializer(lbs, ubs),
-                new KTournamentSelection<>(3),
-                new BLXACrossover(0.5, lbs, ubs),
-                new GaussMutation(0.1, lbs, ubs),
+                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
+                new KTournamentSelection<>(RANDOM, 3),
+                new BLXACrossover(RANDOM, 0.5, lbs, ubs),
+                new GaussMutation(RANDOM, 0.1, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 F7,
                 true).run();
@@ -142,16 +148,17 @@ public class Zadatak1 {
         Arrays.fill(precisions, 5);
         int[] bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
         PopulationInitializer<Solution<Boolean>> initializer =
-                new RandomBinaryPopulationInitializer(bitsPerVariables);
+                new RandomBinaryPopulationInitializer(RANDOM, bitsPerVariables);
         new GeneticAlgorithm<>(
+                RANDOM,
                 100,
                 1e-6,
                 100_000,
                 0.7,
                 initializer,
-                new KTournamentSelection<>(3),
+                new KTournamentSelection<>(RANDOM, 3),
                 new UniformBinaryCrossover(initializer),
-                new RandomBinaryMutation(0.15),
+                new RandomBinaryMutation(RANDOM, 0.15),
                 new GrayDecoder(lbs, ubs, bitsPerVariables),
                 F1,
                 true).run();
@@ -169,16 +176,17 @@ public class Zadatak1 {
         Arrays.fill(precisions, 5);
         int[] bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
         PopulationInitializer<Solution<Boolean>> initializer =
-                new RandomBinaryPopulationInitializer(bitsPerVariables);
+                new RandomBinaryPopulationInitializer(RANDOM, bitsPerVariables);
         new GeneticAlgorithm<>(
+                RANDOM,
                 100,
                 1e-6,
                 100_000,
                 0.5,
                 initializer,
-                new KTournamentSelection<>(3),
+                new KTournamentSelection<>(RANDOM, 3),
                 new UniformBinaryCrossover(initializer),
-                new RandomBinaryMutation(0.01),
+                new RandomBinaryMutation(RANDOM, 0.01),
                 new GrayDecoder(lbs, ubs, bitsPerVariables),
                 F3,
                 true).run();
@@ -196,16 +204,17 @@ public class Zadatak1 {
         Arrays.fill(precisions, 5);
         int[] bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
         PopulationInitializer<Solution<Boolean>> initializer =
-                new RandomBinaryPopulationInitializer(bitsPerVariables);
+                new RandomBinaryPopulationInitializer(RANDOM, bitsPerVariables);
         new GeneticAlgorithm<>(
+                RANDOM,
                 100,
                 1e-6,
                 100_000,
                 0.5,
                 initializer,
-                new KTournamentSelection<>(3),
+                new KTournamentSelection<>(RANDOM, 3),
                 new UniformBinaryCrossover(initializer),
-                new RandomBinaryMutation(0.15),
+                new RandomBinaryMutation(RANDOM, 0.15),
                 new GrayDecoder(lbs, ubs, bitsPerVariables),
                 F6,
                 true).run();
@@ -223,16 +232,17 @@ public class Zadatak1 {
         Arrays.fill(precisions, 12);
         int[] bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
         PopulationInitializer<Solution<Boolean>> initializer =
-                new RandomBinaryPopulationInitializer(bitsPerVariables);
+                new RandomBinaryPopulationInitializer(RANDOM, bitsPerVariables);
         new GeneticAlgorithm<>(
+                RANDOM,
                 100,
                 1e-6,
                 100_000,
                 0.7,
                 initializer,
-                new KTournamentSelection<>(3),
+                new KTournamentSelection<>(RANDOM, 3),
                 new UniformBinaryCrossover(initializer),
-                new RandomBinaryMutation(0.03),
+                new RandomBinaryMutation(RANDOM, 0.03),
                 new GrayDecoder(lbs, ubs, bitsPerVariables),
                 F7,
                 true).run();

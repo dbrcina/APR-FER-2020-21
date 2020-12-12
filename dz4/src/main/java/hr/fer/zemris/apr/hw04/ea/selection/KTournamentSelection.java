@@ -14,10 +14,11 @@ import java.util.Random;
  */
 public class KTournamentSelection<S extends Solution<?>> implements Selection<S> {
 
-    private final Random random = new Random();
+    private final Random random;
     private final int k;
 
-    public KTournamentSelection(int k) {
+    public KTournamentSelection(Random random, int k) {
+        this.random = random;
         if (k < 2) {
             throw new IllegalArgumentException("K needs to be >= 2!");
         }

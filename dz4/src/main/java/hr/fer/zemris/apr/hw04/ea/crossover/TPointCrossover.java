@@ -13,10 +13,11 @@ import java.util.TreeSet;
  */
 public class TPointCrossover implements Crossover<Solution<Boolean>> {
 
-    private final Random random = new Random();
+    private final Random random;
     private final int t;
 
-    public TPointCrossover(int t) {
+    public TPointCrossover(Random random, int t) {
+        this.random = random;
         this.t = t;
     }
 

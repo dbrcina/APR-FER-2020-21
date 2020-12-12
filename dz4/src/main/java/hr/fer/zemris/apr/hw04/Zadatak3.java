@@ -1,14 +1,22 @@
 package hr.fer.zemris.apr.hw04;
 
+import hr.fer.zemris.apr.hw04.ea.EvolutionaryAlgorithm;
 import hr.fer.zemris.apr.hw04.ea.crossover.BLXACrossover;
+import hr.fer.zemris.apr.hw04.ea.crossover.UniformBinaryCrossover;
+import hr.fer.zemris.apr.hw04.ea.decoder.NaturalBinaryDecoder;
 import hr.fer.zemris.apr.hw04.ea.decoder.PassThroughDecoder;
 import hr.fer.zemris.apr.hw04.ea.fitness.F6;
+import hr.fer.zemris.apr.hw04.ea.fitness.F7;
 import hr.fer.zemris.apr.hw04.ea.fitness.FitnessFunction;
 import hr.fer.zemris.apr.hw04.ea.ga.GeneticAlgorithm;
+import hr.fer.zemris.apr.hw04.ea.initializer.PopulationInitializer;
+import hr.fer.zemris.apr.hw04.ea.initializer.RandomBinaryPopulationInitializer;
 import hr.fer.zemris.apr.hw04.ea.initializer.RandomDoublePopulationInitializer;
 import hr.fer.zemris.apr.hw04.ea.mutation.GaussMutation;
+import hr.fer.zemris.apr.hw04.ea.mutation.RandomBinaryMutation;
 import hr.fer.zemris.apr.hw04.ea.selection.KTournamentSelection;
 import hr.fer.zemris.apr.hw04.ea.solution.Solution;
+import hr.fer.zemris.apr.hw04.ea.util.Util;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,231 +37,90 @@ public class Zadatak3 {
 
     public static void main(String[] args) {
         System.out.println("\t#### Starting task 3! ####");
-        f6Decimal();
-        //f7Decimal();
-        //f6Binary();
-        //f7Binary();
+        fDecimal(new F6(3), 200, 1e-6, (int) 1e5, 0.7, 3, 0.5, 3, "data/f6d3d.txt");
+        fDecimal(new F6(6), 200, 1e-6, (int) 1e5, 0.7, 3, 0.5, 3, "data/f6d6d.txt");
+        fDecimal(new F7(3), 200, 1e-6, (int) 1e5, 0.2, 3, 0.5, 1, "data/f7d3d.txt");
+        fDecimal(new F7(6), 200, 1e-6, (int) 1e5, 0.2, 3, 0.5, 1, "data/f7d6d.txt");
+        fBinary(new F6(3), 4, 200, 1e-6, (int) 1e5, 0.8, 3, 0.05, "data/f6d3b.txt");
+        fBinary(new F6(6), 4, 200, 1e-6, (int) 1e5, 0.8, 3, 0.05, "data/f6d6b.txt");
+        fBinary(new F7(3), 4, 200, 1e-6, (int) 1e5, 0.8, 3, 0.05, "data/f7d3b.txt");
+        fBinary(new F7(6), 4, 200, 1e-6, (int) 1e5, 0.8, 3, 0.05, "data/f7d6b.txt");
     }
 
-    private static void f6Decimal() {
-        int populationSize = 100;
-        double tol = 1e-6;
-        int maxEvaluations = (int) 1e5;
-        double mutationProb = 0.8;
-        int k = 5;
-        double alpha = 0.5;
-        double sigma = 2;
-        FitnessFunction f = new F6(3);
+    private static void fDecimal(
+            FitnessFunction f,
+            int populationSize,
+            double tol,
+            int maxEvaluations,
+            double mutationProb,
+            int k,
+            double alpha,
+            double sigma,
+            String file) {
         double[] lbs = new double[f.numberOfVariables()];
         double[] ubs = new double[f.numberOfVariables()];
         Arrays.fill(lbs, X_MIN);
         Arrays.fill(ubs, X_MAX);
-        double[] fitnessVector = new double[30];
-        for (int i = 0; i < fitnessVector.length; i++) {
-            Solution<?> solution = new GeneticAlgorithm<>(
-                    populationSize,
-                    tol,
-                    maxEvaluations,
-                    mutationProb,
-                    new RandomDoublePopulationInitializer(lbs, ubs),
-                    new KTournamentSelection<>(k),
-                    new BLXACrossover(alpha, lbs, ubs),
-                    new GaussMutation(sigma, lbs, ubs),
-                    new PassThroughDecoder(lbs, ubs),
-                    f,
-                    false
-            ).run();
-            fitnessVector[i] = solution.getFitness();
-            f.resetEvaluationsCounter();
-        }
-        saveToFile(fitnessVector, "f6d3d.txt");
-        f = new F6(6);
-        lbs = new double[f.numberOfVariables()];
-        ubs = new double[f.numberOfVariables()];
-        Arrays.fill(lbs, X_MIN);
-        Arrays.fill(ubs, X_MAX);
-        fitnessVector = new double[30];
-        for (int i = 0; i < fitnessVector.length; i++) {
-            Solution<?> solution = new GeneticAlgorithm<>(
-                    populationSize,
-                    tol,
-                    maxEvaluations,
-                    mutationProb,
-                    new RandomDoublePopulationInitializer(lbs, ubs),
-                    new KTournamentSelection<>(k),
-                    new BLXACrossover(alpha, lbs, ubs),
-                    new GaussMutation(sigma, lbs, ubs),
-                    new PassThroughDecoder(lbs, ubs),
-                    f,
-                    false
-            ).run();
-            fitnessVector[i] = solution.getFitness();
-            f.resetEvaluationsCounter();
-        }
-        saveToFile(fitnessVector, "f6d6d.txt");
+        EvolutionaryAlgorithm<? extends Solution<?>> alg = new GeneticAlgorithm<>(
+                RANDOM,
+                populationSize,
+                tol,
+                maxEvaluations,
+                mutationProb,
+                new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
+                new KTournamentSelection<>(RANDOM, k),
+                new BLXACrossover(RANDOM, alpha, lbs, ubs),
+                new GaussMutation(RANDOM, sigma, lbs, ubs),
+                new PassThroughDecoder(lbs, ubs),
+                f,
+                false
+        );
+        saveToFile(alg, f, file);
     }
 
-//    private static void f7Decimal() {
-//        int populationSize = 200;
-//        double tol = 1e-6;
-//        int maxEvaluations = (int) 1e5;
-//        double mutationProb = 0.2;
-//        int k = 3;
-//        double alpha = 0.5;
-//        double sigma = 1;
-//        FitnessFunction f = new F7(3);
-//        double[] lbs = new double[f.numberOfVariables()];
-//        double[] ubs = new double[f.numberOfVariables()];
-//        Arrays.fill(lbs, X_MIN);
-//        Arrays.fill(ubs, X_MAX);
-//        EvolutionaryAlgorithm<Solution<Double>> alg = new GeneticAlgorithm<>(
-//                populationSize,
-//                tol,
-//                maxEvaluations,
-//                mutationProb,
-//                new RandomDoublePopulationInitializer(lbs, ubs),
-//                new KTournamentSelection<>(k),
-//                new BLXACrossover(alpha, lbs, ubs),
-//                new GaussMutation(sigma, lbs, ubs),
-//                new PassThroughDecoder(lbs, ubs),
-//                f,
-//                false
-//        );
-//        saveToFile(alg, "f7d3d.txt");
-//        f = new F7(6);
-//        lbs = new double[f.numberOfVariables()];
-//        ubs = new double[f.numberOfVariables()];
-//        Arrays.fill(lbs, X_MIN);
-//        Arrays.fill(ubs, X_MAX);
-//        alg = new GeneticAlgorithm<>(
-//                populationSize,
-//                tol,
-//                maxEvaluations,
-//                mutationProb,
-//                new RandomDoublePopulationInitializer(lbs, ubs),
-//                new KTournamentSelection<>(k),
-//                new BLXACrossover(alpha, lbs, ubs),
-//                new GaussMutation(sigma, lbs, ubs),
-//                new PassThroughDecoder(lbs, ubs),
-//                f,
-//                false
-//        );
-//        saveToFile(alg, "f7d6d.txt");
-//    }
-//
-//    private static void f6Binary() {
-//        int populationSize = 200;
-//        double tol = 1e-6;
-//        int maxEvaluations = (int) 1e5;
-//        double mutationProb = 0.7;
-//        int k = 3;
-//        double p = 0.2;
-//        FitnessFunction f = new F6(3);
-//        double[] lbs = new double[f.numberOfVariables()];
-//        double[] ubs = new double[f.numberOfVariables()];
-//        double[] precisions = new double[f.numberOfVariables()];
-//        Arrays.fill(lbs, X_MIN);
-//        Arrays.fill(ubs, X_MAX);
-//        Arrays.fill(precisions, 4);
-//        int[] bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
-//        PopulationInitializer<Solution<Boolean>> initializer =
-//                new RandomBinaryPopulationInitializer(bitsPerVariables);
-//        EvolutionaryAlgorithm<Solution<Boolean>> alg = new GeneticAlgorithm<>(
-//                populationSize,
-//                tol,
-//                maxEvaluations,
-//                mutationProb,
-//                initializer,
-//                new KTournamentSelection<>(k),
-//                new UniformBinaryCrossover(initializer),
-//                new RandomBinaryMutation(p),
-//                new GrayDecoder(lbs, ubs, bitsPerVariables),
-//                f,
-//                false
-//        );
-//        saveToFile(alg, "f6d3b.txt");
-//        f = new F6(6);
-//        lbs = new double[f.numberOfVariables()];
-//        ubs = new double[f.numberOfVariables()];
-//        precisions = new double[f.numberOfVariables()];
-//        Arrays.fill(lbs, X_MIN);
-//        Arrays.fill(ubs, X_MAX);
-//        Arrays.fill(precisions, 4);
-//        bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
-//        initializer = new RandomBinaryPopulationInitializer(bitsPerVariables);
-//        alg = new GeneticAlgorithm<>(
-//                populationSize,
-//                tol,
-//                maxEvaluations,
-//                mutationProb,
-//                initializer,
-//                new KTournamentSelection<>(k),
-//                new UniformBinaryCrossover(initializer),
-//                new RandomBinaryMutation(p),
-//                new GrayDecoder(lbs, ubs, bitsPerVariables),
-//                f,
-//                false
-//        );
-//        saveToFile(alg, "f6d6b.txt");
-//    }
-//
-//    private static void f7Binary() {
-//        int populationSize = 200;
-//        double tol = 1e-6;
-//        int maxEvaluations = (int) 1e5;
-//        double mutationProb = 0.7;
-//        int k = 3;
-//        double p = 0.2;
-//        FitnessFunction f = new F7(3);
-//        double[] lbs = new double[f.numberOfVariables()];
-//        double[] ubs = new double[f.numberOfVariables()];
-//        double[] precisions = new double[f.numberOfVariables()];
-//        Arrays.fill(lbs, X_MIN);
-//        Arrays.fill(ubs, X_MAX);
-//        Arrays.fill(precisions, 4);
-//        int[] bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
-//        PopulationInitializer<Solution<Boolean>> initializer =
-//                new RandomBinaryPopulationInitializer(bitsPerVariables);
-//        EvolutionaryAlgorithm<Solution<Boolean>> alg = new GeneticAlgorithm<>(
-//                populationSize,
-//                tol,
-//                maxEvaluations,
-//                mutationProb,
-//                initializer,
-//                new KTournamentSelection<>(k),
-//                new UniformBinaryCrossover(initializer),
-//                new RandomBinaryMutation(p),
-//                new GrayDecoder(lbs, ubs, bitsPerVariables),
-//                f,
-//                false
-//        );
-//        saveToFile(alg, "f7d3b.txt");
-//        f = new F7(6);
-//        lbs = new double[f.numberOfVariables()];
-//        ubs = new double[f.numberOfVariables()];
-//        precisions = new double[f.numberOfVariables()];
-//        Arrays.fill(lbs, X_MIN);
-//        Arrays.fill(ubs, X_MAX);
-//        Arrays.fill(precisions, 4);
-//        bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
-//        initializer = new RandomBinaryPopulationInitializer(bitsPerVariables);
-//        alg = new GeneticAlgorithm<>(
-//                populationSize,
-//                tol,
-//                maxEvaluations,
-//                mutationProb,
-//                initializer,
-//                new KTournamentSelection<>(k),
-//                new UniformBinaryCrossover(initializer),
-//                new RandomBinaryMutation(p),
-//                new GrayDecoder(lbs, ubs, bitsPerVariables),
-//                f,
-//                false
-//        );
-//        saveToFile(alg, "f7d6b.txt");
-//    }
+    private static void fBinary(
+            FitnessFunction f,
+            double precision,
+            int populationSize,
+            double tol,
+            int maxEvaluations,
+            double mutationProb,
+            int k,
+            double p,
+            String file) {
+        double[] lbs = new double[f.numberOfVariables()];
+        double[] ubs = new double[f.numberOfVariables()];
+        double[] precisions = new double[f.numberOfVariables()];
+        Arrays.fill(lbs, X_MIN);
+        Arrays.fill(ubs, X_MAX);
+        Arrays.fill(precisions, precision);
+        int[] bitsPerVariables = Util.calculateBitsPerVariables(lbs, ubs, precisions);
+        PopulationInitializer<Solution<Boolean>> initializer =
+                new RandomBinaryPopulationInitializer(RANDOM, bitsPerVariables);
+        EvolutionaryAlgorithm<? extends Solution<?>> alg = new GeneticAlgorithm<>(
+                RANDOM,
+                populationSize,
+                tol,
+                maxEvaluations,
+                mutationProb,
+                initializer,
+                new KTournamentSelection<>(RANDOM, k),
+                new UniformBinaryCrossover(initializer),
+                new RandomBinaryMutation(RANDOM, p),
+                new NaturalBinaryDecoder(lbs, ubs, bitsPerVariables),
+                f,
+                false
+        );
+        saveToFile(alg, f, file);
+    }
 
-    private static void saveToFile(double[] fitnessVector, String file) {
+    private static void saveToFile(EvolutionaryAlgorithm<? extends Solution<?>> alg, FitnessFunction f, String file) {
+        double[] fitnessVector = new double[30];
+        for (int i = 0; i < fitnessVector.length; i++) {
+            Solution<?> solution = alg.run();
+            fitnessVector[i] = solution.getFitness();
+            f.resetEvaluationsCounter();
+        }
         try (BufferedWriter wr = Files.newBufferedWriter(Paths.get(file))) {
             System.out.println("Saving to " + file + "...");
             wr.write(Arrays.stream(fitnessVector)

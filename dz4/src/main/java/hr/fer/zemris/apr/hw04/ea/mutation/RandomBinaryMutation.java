@@ -11,10 +11,11 @@ import java.util.Random;
  */
 public class RandomBinaryMutation implements Mutation<Solution<Boolean>> {
 
-    private final Random random = new Random();
+    private final Random random;
     private final double p;
 
-    public RandomBinaryMutation(double p) {
+    public RandomBinaryMutation(Random random, double p) {
+        this.random = random;
         this.p = p;
     }
 

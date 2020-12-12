@@ -11,12 +11,13 @@ import java.util.Random;
  */
 public class BLXACrossover implements Crossover<Solution<Double>> {
 
-    private final Random random = new Random();
+    private final Random random;
     private final double alpha;
     private final double[] lbs;
     private final double[] ubs;
 
-    public BLXACrossover(double alpha, double[] lbs, double[] ubs) {
+    public BLXACrossover(Random random, double alpha, double[] lbs, double[] ubs) {
+        this.random = random;
         this.alpha = alpha;
         this.lbs = lbs;
         this.ubs = ubs;
