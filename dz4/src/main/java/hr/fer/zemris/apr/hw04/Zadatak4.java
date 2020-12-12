@@ -76,6 +76,35 @@ public class Zadatak4 {
     }
 
     private static void optimizeMutation() {
+        List<Double> mutations = List.of(0.1, 0.3, 0.6, 0.9);
+        FitnessFunction f = new F6(3);
+        double[] lbs = new double[f.numberOfVariables()];
+        double[] ubs = new double[f.numberOfVariables()];
+        Arrays.fill(lbs, X_MIN);
+        Arrays.fill(ubs, X_MAX);
+        double[][] data = new double[30][mutations.size()];
+        for (int i = 0; i < mutations.size(); i++) {
+            EvolutionaryAlgorithm<? extends Solution<?>> alg = new GeneticAlgorithm<>(
+                    RANDOM,
+                    200,
+                    TOL,
+                    MAX_EVALUATIONS,
+                    mutations.get(i),
+                    new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
+                    new KTournamentSelection<>(RANDOM, K),
+                    new BLXACrossover(RANDOM, ALPHA, lbs, ubs),
+                    new GaussMutation(RANDOM, SIGMA, lbs, ubs),
+                    new PassThroughDecoder(lbs, ubs),
+                    f,
+                    false
+            );
+            for (int j = 0; j < data.length; j++) {
+                data[j][i] = alg.run().getFitness();
+                f.resetEvaluationsCounter();
+            }
+        }
+        String[] header = mutations.stream().map(String::valueOf).toArray(String[]::new);
+        writeToCSV(header, data, "data/mutations.csv");
     }
 
     private static void writeToCSV(String[] header, double[][] data, String file) {
