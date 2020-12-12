@@ -16,7 +16,7 @@ public class Util {
      * @return a double representation of binary number within [{@code xMin}, {@code xMax}].
      */
     public static double fromBinaryToDouble(Boolean[] bits, double xMin, double xMax) {
-        long b = Long.parseLong(fromBooleanArrayToString(bits), 2);
+        long b = Long.parseUnsignedLong(fromBooleanArrayToString(bits), 2);
         return xMin + b / (Math.pow(2, bits.length) - 1) * (xMax - xMin);
     }
 
