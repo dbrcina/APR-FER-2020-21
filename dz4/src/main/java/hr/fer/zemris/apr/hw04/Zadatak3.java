@@ -2,7 +2,7 @@ package hr.fer.zemris.apr.hw04;
 
 import hr.fer.zemris.apr.hw04.ea.EvolutionaryAlgorithm;
 import hr.fer.zemris.apr.hw04.ea.crossover.BLXACrossover;
-import hr.fer.zemris.apr.hw04.ea.crossover.MultiPointCrossover;
+import hr.fer.zemris.apr.hw04.ea.crossover.UniformBinaryCrossover;
 import hr.fer.zemris.apr.hw04.ea.decoder.NaturalBinaryDecoder;
 import hr.fer.zemris.apr.hw04.ea.decoder.PassThroughDecoder;
 import hr.fer.zemris.apr.hw04.ea.fitness.FitnessFunction;
@@ -31,10 +31,29 @@ public class Zadatak3 {
     /*
      * F6 dimenzija 3:
      *  Decimal:
-     *      -popSize=200, sigma=1.6, p=0.5, turnir=3, blxa=0.5, eval=1e5
+     *      -popSize=100, sigma=1.4, p=0.7, turnir=3, blxa=0.5, eval=1e5
      *  Binary:
-     *      -popSize=200, pm=0.01, turnir=3, multi-point=2, natural-decoder, eval=1e5
+     *      -popSize=100, pm=0.02, turnir=3, uniformno, natural-decoder, eval=1e5
+     *
+     * F6 dimenzija 6:
+     *  Decimal:
+     *      -popSize=200, sigma=0.8, p=1.0, turnir=3, blxa=0.5, eval=1e5
+     *  Binary:
+     *      -popSize=200, pm=0.06, turnir=3, uniformno, natural-decoder, eval=1e5
+     *
+     * F7 dimenzija 3:
+     *  Decimal:
+     *      -popSize=200, sigma=1.3, p=0.5, turnir=3, blxa=0.5, eval=1e5
+     *  Binary:
+     *      -popSize=200, pm =0.01, turnir=3, uniformno, natural-decoder, eval=1e5
+     *
+     * F7 dimenzija 6:
+     *  Decimal:
+     *      -popSize=200, sigma=1e-12, p=0.92, turnir=3, blxa=0.5, eval=1e5
+     *  Binary:
+     *      -popSize=200, pm=0.02, turnir=3, uniformno, natural-decoder, eval=1e5
      */
+
     private static final Random RANDOM = new Random();
     private static final double X_MIN = -50;
     private static final double X_MAX = 150;
@@ -43,14 +62,14 @@ public class Zadatak3 {
 
     public static void main(String[] args) {
         System.out.println("\t#### Starting task 3! ####");
-//        fDecimal(new F6(3), 200, 1.6, 0.5, "data/f6d3d.txt");
-//        fBinary(new F6(3), 200, 0.01, "data/f6d3b.txt");
-//        fDecimal(new F6(6), 1, 0.6, "data/f6d6d.txt");
-//        fDecimal(new F7(3), 1, 0.5, "data/f7d3d.txt");
-//        fDecimal(new F7(6), 1, 0.5, "data/f7d6d.txt");
-//        fBinary(new F6(6), 0.04, "data/f6d6b.txt");
-//        fBinary(new F7(3), 0.04, "data/f7d3b.txt");
-//        fBinary(new F7(6), 0.04, "data/f7d6b.txt");
+//        fDecimal(new F6(3), 100, 1.4, 0.7, "data/task3/f6d3d.txt");
+//        fBinary(new F6(3), 100, 0.02, "data/task3/f6d3b.txt");
+//        fDecimal(new F6(6), 200, 0.8, 1, "data/task3/f6d6d.txt");
+//        fBinary(new F6(6), 200, 0.06, "data/task3/f6d6b.txt");
+//        fDecimal(new F7(3), 200, 1.3, 0.5, "data/task3/f7d3d.txt");
+//        fBinary(new F7(3), 200, 0.01, "data/task3/f7d3b.txt");
+//        fDecimal(new F7(6), 200, 1e-12, 0.92, "data/task3/f7d6d.txt");
+//        fBinary(new F7(6), 200, 0.02, "data/task3/f7d6b.txt");
     }
 
     private static void fDecimal(FitnessFunction f, int populationSize, double sigma, double p, String file) {
@@ -89,7 +108,7 @@ public class Zadatak3 {
                 MAX_EVALUATIONS,
                 new RandomBinaryPopulationInitializer(RANDOM, bitsPerVariables),
                 new KTournamentSelection<>(RANDOM, 3),
-                new MultiPointCrossover(RANDOM, 2),
+                new UniformBinaryCrossover(RANDOM),
                 new SimpleBinaryMutation(RANDOM, p),
                 new NaturalBinaryDecoder(lbs, ubs, bitsPerVariables),
                 f,

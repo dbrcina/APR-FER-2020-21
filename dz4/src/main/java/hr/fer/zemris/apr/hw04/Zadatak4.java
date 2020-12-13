@@ -55,7 +55,7 @@ public class Zadatak4 {
                 new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
                 new KTournamentSelection<>(RANDOM, 3),
                 new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 1.5, 0.9, lbs, ubs),
+                new GaussMutation(RANDOM, 1.3, 0.6, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false
@@ -66,7 +66,7 @@ public class Zadatak4 {
             fitnessVector[i] = solution.getFitness();
             f.resetEvaluationsCounter();
         }
-        String file = "data/optimal_population_mutation.txt";
+        String file = "data/task4/optimal_population_mutation.txt";
         try (BufferedWriter wr = Files.newBufferedWriter(Paths.get(file))) {
             System.out.println("Saving to " + file + "...");
             wr.write(Arrays.stream(fitnessVector)
@@ -99,7 +99,7 @@ public class Zadatak4 {
                     new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
                     new KTournamentSelection<>(RANDOM, 3),
                     new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                    new GaussMutation(RANDOM, 1.5, 0.9, lbs, ubs),
+                    new GaussMutation(RANDOM, 1.3, 0.8, lbs, ubs),
                     new PassThroughDecoder(lbs, ubs),
                     f,
                     false
@@ -110,10 +110,10 @@ public class Zadatak4 {
             }
         }
         String[] header = popSizes.stream().map(String::valueOf).toArray(String[]::new);
-        writeToCSV(header, data, "data/population_sizes.csv");
+        writeToCSV(header, data, "data/task4/population_sizes.csv");
     }
 
-    private static void optimizeMutation() { // optimal 0.9
+    private static void optimizeMutation() { // optimal 0.6
         List<Double> mutations = List.of(0.1, 0.3, 0.6, 0.9);
         FitnessFunction f = new F6(3);
         double[] lbs = new double[f.numberOfVariables()];
@@ -130,7 +130,7 @@ public class Zadatak4 {
                     new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
                     new KTournamentSelection<>(RANDOM, 3),
                     new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                    new GaussMutation(RANDOM, 1.5, mutations.get(i), lbs, ubs),
+                    new GaussMutation(RANDOM, 1.3, mutations.get(i), lbs, ubs),
                     new PassThroughDecoder(lbs, ubs),
                     f,
                     false
@@ -141,7 +141,7 @@ public class Zadatak4 {
             }
         }
         String[] header = mutations.stream().map(String::valueOf).toArray(String[]::new);
-        writeToCSV(header, data, "data/mutations.csv");
+        writeToCSV(header, data, "data/task4/mutations.csv");
     }
 
     private static void writeToCSV(String[] header, double[][] data, String file) {

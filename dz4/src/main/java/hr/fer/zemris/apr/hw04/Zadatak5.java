@@ -51,9 +51,9 @@ public class Zadatak5 {
                 TOL,
                 MAX_EVALUATIONS,
                 new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
-                new KTournamentSelection<>(RANDOM, 5),
+                new KTournamentSelection<>(RANDOM, 3),
                 new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                new GaussMutation(RANDOM, 1.5, 0.9, lbs, ubs),
+                new GaussMutation(RANDOM, 1.3, 0.6, lbs, ubs),
                 new PassThroughDecoder(lbs, ubs),
                 f,
                 false
@@ -64,7 +64,7 @@ public class Zadatak5 {
             fitnessVector[i] = solution.getFitness();
             f.resetEvaluationsCounter();
         }
-        String file = "data/optimal_population_mutation_tournament.txt";
+        String file = "data/task5/optimal_population_mutation_tournament.txt";
         try (BufferedWriter wr = Files.newBufferedWriter(Paths.get(file))) {
             System.out.println("Saving to " + file + "...");
             wr.write(Arrays.stream(fitnessVector)
@@ -80,7 +80,7 @@ public class Zadatak5 {
         }
     }
 
-    private static void optimizeTournament() { // optimal 5
+    private static void optimizeTournament() { // optimal 3
         List<Integer> ks = List.of(3, 5, 10, 15, 20, 25, 30, 40, 50);
         FitnessFunction f = new F6(3);
         double[] lbs = new double[f.numberOfVariables()];
@@ -97,7 +97,7 @@ public class Zadatak5 {
                     new RandomDoublePopulationInitializer(RANDOM, lbs, ubs),
                     new KTournamentSelection<>(RANDOM, ks.get(i)),
                     new BLXACrossover(RANDOM, 0.5, lbs, ubs),
-                    new GaussMutation(RANDOM, 1.5, 0.9, lbs, ubs),
+                    new GaussMutation(RANDOM, 1.3, 0.6, lbs, ubs),
                     new PassThroughDecoder(lbs, ubs),
                     f,
                     false
@@ -108,7 +108,7 @@ public class Zadatak5 {
             }
         }
         String[] header = ks.stream().map(String::valueOf).toArray(String[]::new);
-        writeToCSV(header, data, "data/tournaments.csv");
+        writeToCSV(header, data, "data/task5/tournaments.csv");
     }
 
     private static void writeToCSV(String[] header, double[][] data, String file) {
