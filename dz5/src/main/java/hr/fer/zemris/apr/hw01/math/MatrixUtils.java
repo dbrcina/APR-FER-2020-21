@@ -40,14 +40,6 @@ public class MatrixUtils {
         return identity;
     };
 
-    public static final BiFunction<Integer, Integer, IMatrix> ONES = (n, m) -> {
-        double[][] data = new double[n][m];
-        for (double[] row : data) {
-            Arrays.fill(row, 1);
-        }
-        return new Matrix(data);
-    };
-
     /* ---------------------------------------------------------------- */
     /* ------------------------- PARSE METHODS ------------------------ */
 

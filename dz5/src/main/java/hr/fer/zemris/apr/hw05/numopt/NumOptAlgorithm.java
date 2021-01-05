@@ -1,7 +1,6 @@
 package hr.fer.zemris.apr.hw05.numopt;
 
 import hr.fer.zemris.apr.hw01.math.IMatrix;
-import hr.fer.zemris.apr.hw01.math.Matrix;
 import hr.fer.zemris.apr.hw01.math.MatrixUtils;
 
 import java.io.IOException;
@@ -18,6 +17,8 @@ import java.util.function.Function;
  */
 public abstract class NumOptAlgorithm {
 
+    private final String file;
+
     private int currentIteration;
     private double currentT;
     private double intPeriod;
@@ -25,7 +26,6 @@ public abstract class NumOptAlgorithm {
     private int nPrint;
     private Path dirPrint;
     private PrintWriter pwr;
-    private final String file;
 
     protected NumOptAlgorithm(String file) {
         this.file = file;
@@ -62,7 +62,6 @@ public abstract class NumOptAlgorithm {
             IMatrix A, IMatrix B, List<Function<Double, Double>> rFunctions,
             List<Function<Double, Double>> analyticalFunctions) {
         double error = 0.0;
-        IMatrix r = new Matrix(state.getRowsCount(), state.getColumnsCount());
         while (currentT <= tMax) {
             if (analyticalFunctions != null) {
                 for (int i = 0; i < state.getRowsCount(); i++) {
@@ -72,10 +71,7 @@ public abstract class NumOptAlgorithm {
             if (currentIteration % nPrint == 0) {
                 print(state, file, false);
             }
-            for (int i = 0; i < r.getRowsCount(); i++) {
-                r.set(i, 0, rFunctions.get(i).apply(currentT));
-            }
-            state = runInternal(state, A, B, r, intPeriod);
+            state = calculateExplicit(state, A, B, rFunctions);
             currentT += intPeriod;
             currentIteration += 1;
         }
@@ -86,7 +82,11 @@ public abstract class NumOptAlgorithm {
         return state;
     }
 
-    protected abstract IMatrix runInternal(IMatrix state, IMatrix A, IMatrix B, IMatrix r, double t);
+    public abstract IMatrix calculateExplicit(
+            IMatrix xk, IMatrix A, IMatrix B, List<Function<Double, Double>> rFunctions);
+
+    protected abstract IMatrix calculateImplicit(
+            IMatrix xk, IMatrix xk1, IMatrix A, IMatrix B, List<Function<Double, Double>> rFunctions);
 
     private void print(IMatrix x, String file, boolean flush) {
         if (pwr == null) {
@@ -117,6 +117,14 @@ public abstract class NumOptAlgorithm {
             sj.add(String.valueOf(x.get(i, 0)));
         }
         pwr.println(sj.toString());
+    }
+
+    protected double getCurrentT() {
+        return currentT;
+    }
+
+    protected double getIntegrationPeriod() {
+        return intPeriod;
     }
 
 }
