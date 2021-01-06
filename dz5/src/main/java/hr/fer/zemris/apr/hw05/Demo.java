@@ -2,7 +2,7 @@ package hr.fer.zemris.apr.hw05;
 
 import hr.fer.zemris.apr.hw01.math.IMatrix;
 import hr.fer.zemris.apr.hw01.math.MatrixUtils;
-import hr.fer.zemris.apr.hw05.numopt.*;
+import hr.fer.zemris.apr.hw05.numint.*;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,7 +18,7 @@ public class Demo {
 
     private static final String RESOURCES_FOLDER = "src/main/resources/";
     private static final Properties CONFIGURATION = new Properties();
-    private static final Map<String, NumOptAlgorithm> ALGORITHMS = Map.of(
+    private static final Map<String, NumIntAlgorithm> ALGORITHMS = Map.of(
             "euler", new Euler(),
             "reversed-euler", new ReversedEuler(),
             "trapezoid", new Trapezoid(),
@@ -31,6 +31,8 @@ public class Demo {
         switch (args[0]) {
             case "task1" -> task("1", args[1], List.of(t -> 0.0, t -> 0.0));
             case "task2" -> task("2", args[1], List.of(t -> 0.0, t -> 0.0));
+            case "task3" -> task("3", args[1], List.of(t -> 1.0, t -> 1.0));
+            case "task4" -> task("4", args[1], List.of(t -> t, t -> t));
         }
     }
 
@@ -52,7 +54,7 @@ public class Demo {
         CONFIGURATION.load(Files.newInputStream(
                 Paths.get(RESOURCES_FOLDER + "task" + taskNum + "/configuration.properties"))
         );
-        NumOptAlgorithm alg = ALGORITHMS.get(algName);
+        NumIntAlgorithm alg = ALGORITHMS.get(algName);
         System.out.println("Running " + algName.toUpperCase());
         alg.configure(CONFIGURATION);
         alg.run(x, A, B, rFunctions, analyticalFunctions);

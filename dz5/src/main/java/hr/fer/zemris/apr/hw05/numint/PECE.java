@@ -1,4 +1,4 @@
-package hr.fer.zemris.apr.hw05.numopt;
+package hr.fer.zemris.apr.hw05.numint;
 
 import hr.fer.zemris.apr.hw01.math.IMatrix;
 
@@ -9,12 +9,12 @@ import java.util.function.Function;
 /**
  * @author dbrcina
  */
-public class PECE extends NumOptAlgorithm {
+public class PECE extends NumIntAlgorithm {
 
     private final int s;
 
-    private NumOptAlgorithm predictor;
-    private NumOptAlgorithm corrector;
+    private NumIntAlgorithm predictor;
+    private NumIntAlgorithm corrector;
 
     public PECE(int s) {
         super("pece" + (s >= 2 ? s : "") + ".csv");
@@ -32,10 +32,10 @@ public class PECE extends NumOptAlgorithm {
             throw new RuntimeException("Corrector is missing!");
         }
         try {
-            predictor = (NumOptAlgorithm) Class.forName((String) predictorObject)
+            predictor = (NumIntAlgorithm) Class.forName((String) predictorObject)
                     .getConstructor()
                     .newInstance();
-            corrector = (NumOptAlgorithm) Class.forName((String) correctorObject)
+            corrector = (NumIntAlgorithm) Class.forName((String) correctorObject)
                     .getConstructor()
                     .newInstance();
         } catch (Exception e) {

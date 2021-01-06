@@ -1,4 +1,4 @@
-package hr.fer.zemris.apr.hw05.numopt;
+package hr.fer.zemris.apr.hw05.numint;
 
 import hr.fer.zemris.apr.hw01.math.IMatrix;
 import hr.fer.zemris.apr.hw01.math.MatrixUtils;
@@ -15,7 +15,7 @@ import java.util.function.Function;
 /**
  * @author dbrcina
  */
-public abstract class NumOptAlgorithm {
+public abstract class NumIntAlgorithm {
 
     private final String file;
 
@@ -27,7 +27,7 @@ public abstract class NumOptAlgorithm {
     private Path dirPrint;
     private PrintWriter pwr;
 
-    protected NumOptAlgorithm(String file) {
+    protected NumIntAlgorithm(String file) {
         this.file = file;
     }
 
