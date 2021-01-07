@@ -47,6 +47,8 @@ public class PECE extends NumIntAlgorithm {
 
     @Override
     public IMatrix calculateExplicit(IMatrix xk, IMatrix A, IMatrix B, List<Function<Double, Double>> rFunctions) {
+        predictor.setCurrentT(getCurrentT());
+        corrector.setCurrentT(getCurrentT());
         IMatrix xk1 = predictor.calculateExplicit(xk, A, B, rFunctions);
         for (int i = 0; i < s; i++) {
             xk1 = corrector.calculateImplicit(xk, xk1, A, B, rFunctions);

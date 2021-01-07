@@ -123,6 +123,10 @@ public abstract class NumIntAlgorithm {
         return currentT;
     }
 
+    protected void setCurrentT(double currentT) {
+        this.currentT = currentT;
+    }
+
     protected double getIntegrationPeriod() {
         return intPeriod;
     }
